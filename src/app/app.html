@@ -5,15 +5,19 @@
       <div class="logo">
         <a href="#">BIXO<span class="text-gradient">LAB</span></a>
       </div>
-      
-      <nav class="nav-links">
-        <a href="#home">HOME</a>
-        <a href="#como-funciona">COMO FUNCIONA</a>
-        <a href="#collab">COLLAB</a>
-        <a href="#orcamento">ORÇAMENTO</a>
-        <a href="#o-lab">O LAB</a>
+
+      <button class="mobile-menu-toggle" (click)="toggleMobileMenu()">
+        <i class="fa-solid" [class.fa-bars]="!isMobileMenuOpen" [class.fa-xmark]="isMobileMenuOpen"></i>
+      </button>
+
+      <nav class="nav-links" [class.active]="isMobileMenuOpen">
+        <a href="#home" (click)="toggleMobileMenu()">HOME</a>
+        <a href="#como-funciona" (click)="toggleMobileMenu()">COMO FUNCIONA</a>
+        <a href="#collab" (click)="toggleMobileMenu()">COLLAB</a>
+        <a href="#orcamento" (click)="toggleMobileMenu()">ORÇAMENTO</a>
+        <a href="#o-lab" (click)="toggleMobileMenu()">O LAB</a>
       </nav>
-      
+
       <div class="nav-actions">
         <a href="https://wa.link/cqiozw" target="_blank" class="nav-btn-outline">
           <i class="fa-brands fa-whatsapp"></i> Fale com a gente
@@ -28,22 +32,22 @@
       <div class="glow-orb orb-1"></div>
       <div class="glow-orb orb-2"></div>
     </div>
-    
+
     <div class="container hero-container">
       <div class="hero-content">
         <div class="badge animate-fade-up">Desde 2016</div>
         <h1 class="hero-title animate-fade-up delay-1">
-          BIXO HOJE,<br/> <span class="text-gradient">LENDA AMANHÃ.</span>
+          BIXO HOJE,<br /> <span class="text-gradient">LENDA AMANHÃ.</span>
         </h1>
         <p class="hero-subtitle animate-fade-up delay-2">
-          As camisetas mais legais da sua vida,<br/> na fase mais legal da sua vida.
+          As camisetas mais legais da sua vida,<br /> na fase mais legal da sua vida.
         </p>
         <div class="hero-cta animate-fade-up delay-3">
           <a href="#como-funciona" class="btn-primary">COMO FUNCIONA</a>
           <a href="https://forms.gle/UrhEj3qoyig9MP3t8" target="_blank" class="btn-secondary">Pedidos Coletivos</a>
         </div>
       </div>
-      
+
       <div class="hero-image animate-fade-up delay-2">
         <div class="image-placeholder glass-card">
           <i class="fa-solid fa-shirt"></i>
@@ -57,8 +61,8 @@
   <div class="marquee-section">
     <div class="marquee">
       <div class="marquee-content">
-        <span>ESTILO COLEGIAL</span> • <span>QUALIDADE PREMIUM</span> • <span>DESIGN EXCLUSIVO</span> • <span>PARA BIXOS E BIXETES</span> • 
-        <span>ESTILO COLEGIAL</span> • <span>QUALIDADE PREMIUM</span> • <span>DESIGN EXCLUSIVO</span> • <span>PARA BIXOS E BIXETES</span> • 
+        <span>ESTILO COLEGIAL</span> • <span>QUALIDADE PREMIUM</span> • <span>DESIGN PERSONALIZADO</span> •
+        <span>ESTILO COLEGIAL</span> • <span>QUALIDADE PREMIUM</span> • <span>DESIGN PERSONALIZADO</span> •
       </div>
     </div>
   </div>
@@ -67,21 +71,21 @@
   <section id="como-funciona" class="como-funciona">
     <div class="container">
       <h2 class="section-title">COMO <span class="text-gradient">FUNCIONA</span></h2>
-      
+
       <div class="steps-grid">
-        <div class="step-card glass-card">
+        <div class="step-card glass-card animate-on-scroll delay-1">
           <div class="step-icon"><i class="fa-solid fa-pen-nib"></i></div>
           <h3>1. Design</h3>
           <p>Nossa equipe cria a arte perfeita que representa a sua turma ou curso com um estilo colegial premium.</p>
         </div>
-        
-        <div class="step-card glass-card">
+
+        <div class="step-card glass-card animate-on-scroll delay-2">
           <div class="step-icon"><i class="fa-solid fa-clipboard-check"></i></div>
           <h3>2. Orçamento</h3>
           <p>Fazemos orçamentos para pedidos coletivos ou individuais, adequados para o bolso do universitário.</p>
         </div>
-        
-        <div class="step-card glass-card">
+
+        <div class="step-card glass-card animate-on-scroll delay-3">
           <div class="step-icon"><i class="fa-solid fa-box-open"></i></div>
           <h3>3. Produção & Entrega</h3>
           <p>Usamos tecidos e estampas de alta qualidade para garantir que as camisetas durem toda a faculdade.</p>
@@ -94,22 +98,24 @@
   <section id="o-lab" class="o-lab">
     <div class="container">
       <div class="lab-grid">
-        <div class="lab-image">
+        <div class="lab-image animate-on-scroll delay-1">
           <div class="image-wrapper">
-             <div class="lab-overlay"></div>
-             <i class="fa-solid fa-store lab-icon"></i>
+            <div class="lab-overlay"></div>
+            <i class="fa-solid fa-store lab-icon"></i>
           </div>
         </div>
-        
-        <div class="lab-content">
+
+        <div class="lab-content animate-on-scroll delay-2">
           <h2 class="section-title text-left">O <span class="text-gradient">LAB</span></h2>
           <p class="lead-text">
             Parece até que a gente tá chegando agora, mas na verdade a BIXO existe desde 2016.
           </p>
           <p>
-            Acompanhamos milhares de alunos em sua jornada acadêmica, fazendo o merch de centenas de clientes e assim seguimos, agora pela primeira vez com uma loja física animal pra receber vocês, nossos queridos bixos e bixetes. Nos vemos lá!
+            Acompanhamos milhares de alunos em sua jornada acadêmica, fazendo o merch de centenas de clientes e assim
+            seguimos, agora pela primeira vez com uma loja física animal pra receber vocês, nossos queridos bixos e
+            bixetes. Nos vemos lá!
           </p>
-          
+
           <div class="location-box glass-card">
             <i class="fa-solid fa-location-dot"></i>
             <div>
@@ -130,7 +136,7 @@
           <h3>BIXO<span class="text-gradient">LAB</span></h3>
           <p>As camisetas mais legais da sua vida, na fase mais legal da sua vida.</p>
         </div>
-        
+
         <div class="footer-links">
           <h4>Navegação</h4>
           <a href="#home">Home</a>
@@ -139,7 +145,7 @@
           <a href="#orcamento">Orçamento</a>
           <a href="#o-lab">O Lab</a>
         </div>
-        
+
         <div class="footer-contact">
           <h4>Contato</h4>
           <a href="mailto:contato@bixolab.com.br"><i class="fa-solid fa-envelope"></i> contato@bixolab.com.br</a>
@@ -147,7 +153,7 @@
           <a href="https://www.instagram.com/bixolab/"><i class="fa-brands fa-instagram"></i> @bixolab</a>
         </div>
       </div>
-      
+
       <div class="footer-bottom">
         <p>&copy; 2026 Bixo Lab. Todos os direitos reservados.</p>
         <p>Bixo Hoje, Lenda Amanhã.</p>
