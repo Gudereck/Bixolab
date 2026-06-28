@@ -1,126 +1,277 @@
 <div class="app-wrapper">
   <!-- Navbar -->
-  <header class="navbar">
+  <header class="navbar" [class.scrolled]="isNavbarScrolled">
     <div class="container nav-container">
       <div class="logo">
-        <a href="#">BIXO<span class="text-gradient">LAB</span></a>
+        <a href="#home">BIXO<span class="text-gradient">LAB</span></a>
       </div>
 
-      <button class="mobile-menu-toggle" (click)="toggleMobileMenu()">
+      <button
+        class="mobile-menu-toggle"
+        (click)="toggleMobileMenu()"
+        [attr.aria-expanded]="isMobileMenuOpen"
+        aria-label="Menu de navegação"
+      >
         <i class="fa-solid" [class.fa-bars]="!isMobileMenuOpen" [class.fa-xmark]="isMobileMenuOpen"></i>
       </button>
 
       <nav class="nav-links" [class.active]="isMobileMenuOpen">
-        <a href="#home" (click)="toggleMobileMenu()">HOME</a>
-        <a href="#como-funciona" (click)="toggleMobileMenu()">COMO FUNCIONA</a>
-        <a href="#collab" (click)="toggleMobileMenu()">COLLAB</a>
-        <a href="#orcamento" (click)="toggleMobileMenu()">ORÇAMENTO</a>
-        <a href="#o-lab" (click)="toggleMobileMenu()">O LAB</a>
+        <a href="#home" (click)="closeMobileMenu()">Home</a>
+        <a href="#como-funciona" (click)="closeMobileMenu()">Como Funciona</a>
+        <a href="#collab" (click)="closeMobileMenu()">Collab</a>
+        <a href="#orcamento" (click)="closeMobileMenu()">Orçamento</a>
+        <a href="#o-lab" (click)="closeMobileMenu()">O Lab</a>
       </nav>
 
       <div class="nav-actions">
-        <a href="https://wa.link/cqiozw" target="_blank" class="nav-btn-outline">
+        <a href="https://wa.link/cqiozw" target="_blank" rel="noopener noreferrer" class="nav-btn-outline">
           <i class="fa-brands fa-whatsapp"></i> Fale com a gente
         </a>
       </div>
     </div>
   </header>
 
-  <!-- Hero Section -->
+  <!-- Hero -->
   <section id="home" class="hero">
     <div class="hero-bg-elements">
+      <div class="grid-pattern"></div>
       <div class="glow-orb orb-1"></div>
       <div class="glow-orb orb-2"></div>
     </div>
 
     <div class="container hero-container">
       <div class="hero-content">
-        <div class="badge animate-fade-up">Desde 2016</div>
+        <div class="badge animate-fade-up">
+          <i class="fa-solid fa-star"></i> Desde 2016
+        </div>
         <h1 class="hero-title animate-fade-up delay-1">
-          BIXO HOJE,<br /> <span class="text-gradient">LENDA AMANHÃ.</span>
+          Bixo Hoje,<br />
+          <span class="text-gradient">Lenda Amanhã.</span>
         </h1>
         <p class="hero-subtitle animate-fade-up delay-2">
-          As camisetas mais legais da sua vida,<br /> na fase mais legal da sua vida.
+          As camisetas mais legais da sua vida, na fase mais legal da sua vida.
         </p>
         <div class="hero-cta animate-fade-up delay-3">
-          <a href="#como-funciona" class="btn-primary">COMO FUNCIONA</a>
-          <a href="https://forms.gle/UrhEj3qoyig9MP3t8" target="_blank" class="btn-secondary">Pedidos Coletivos</a>
+          <a href="#como-funciona" class="btn-primary">Como Funciona</a>
+          <a href="https://forms.gle/UrhEj3qoyig9MP3t8" target="_blank" rel="noopener noreferrer" class="btn-ghost">
+            Pedidos Coletivos <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+        <div class="hero-stats animate-fade-up delay-3">
+          <div class="stat">
+            <strong>10+</strong>
+            <span>Anos de história</span>
+          </div>
+          <div class="stat">
+            <strong>500+</strong>
+            <span>Turmas atendidas</span>
+          </div>
+          <div class="stat">
+            <strong>1ª</strong>
+            <span>Loja física</span>
+          </div>
         </div>
       </div>
 
       <div class="hero-image animate-fade-up delay-2">
-        <div class="image-placeholder glass-card">
-          <i class="fa-solid fa-shirt"></i>
-          <span>Mockup de Camiseta Premium</span>
+        <div class="hero-photo glass-card">
+          <img src="images/hero-shirt.jpg" alt="Grupo de universitários usando camisetas da turma" loading="eager" />
+        </div>
+        <div class="floating-tag">
+          <i class="fa-solid fa-graduation-cap"></i> Camisetas de Turma
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Services / Features Marquee -->
-  <div class="marquee-section">
+  <!-- Marquee -->
+  <div class="marquee-section" aria-hidden="true">
     <div class="marquee">
       <div class="marquee-content">
-        <span>ESTILO COLEGIAL</span> • <span>QUALIDADE PREMIUM</span> • <span>DESIGN PERSONALIZADO</span> •
-        <span>ESTILO COLEGIAL</span> • <span>QUALIDADE PREMIUM</span> • <span>DESIGN PERSONALIZADO</span> •
+        <span>Estilo Colegial</span><span class="dot">•</span>
+        <span>Qualidade Premium</span><span class="dot">•</span>
+        <span>Design Personalizado</span><span class="dot">•</span>
+        <span>Entrega Garantida</span><span class="dot">•</span>
+        <span>Estilo Colegial</span><span class="dot">•</span>
+        <span>Qualidade Premium</span><span class="dot">•</span>
+        <span>Design Personalizado</span><span class="dot">•</span>
+        <span>Entrega Garantida</span><span class="dot">•</span>
       </div>
     </div>
   </div>
 
-  <!-- Como Funciona Section -->
+  <!-- Como Funciona -->
   <section id="como-funciona" class="como-funciona">
     <div class="container">
-      <h2 class="section-title">COMO <span class="text-gradient">FUNCIONA</span></h2>
+      <p class="section-label">Processo</p>
+      <h2 class="section-title">Como <span class="text-gradient">Funciona</span></h2>
+      <p class="section-subtitle">
+        Do design à entrega, cuidamos de cada detalhe para que sua turma tenha o merch perfeito.
+      </p>
 
       <div class="steps-grid">
         <div class="step-card glass-card animate-on-scroll delay-1">
+          <span class="step-number">01</span>
           <div class="step-icon"><i class="fa-solid fa-pen-nib"></i></div>
-          <h3>1. Design</h3>
+          <h3>Design</h3>
           <p>Nossa equipe cria a arte perfeita que representa a sua turma ou curso com um estilo colegial premium.</p>
         </div>
 
         <div class="step-card glass-card animate-on-scroll delay-2">
+          <span class="step-number">02</span>
           <div class="step-icon"><i class="fa-solid fa-clipboard-check"></i></div>
-          <h3>2. Orçamento</h3>
+          <h3>Orçamento</h3>
           <p>Fazemos orçamentos para pedidos coletivos ou individuais, adequados para o bolso do universitário.</p>
         </div>
 
         <div class="step-card glass-card animate-on-scroll delay-3">
+          <span class="step-number">03</span>
           <div class="step-icon"><i class="fa-solid fa-box-open"></i></div>
-          <h3>3. Produção & Entrega</h3>
+          <h3>Produção & Entrega</h3>
           <p>Usamos tecidos e estampas de alta qualidade para garantir que as camisetas durem toda a faculdade.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- O LAB Section -->
+  <!-- Galeria -->
+  <section id="galeria" class="galeria">
+    <div class="container">
+      <p class="section-label">Uniformes</p>
+      <h2 class="section-title">Merch <span class="text-gradient">Universitário</span></h2>
+      <p class="section-subtitle">
+        Camisetas de turma, estampas exclusivas e produção pensada para a vida na faculdade.
+      </p>
+
+      <div class="gallery-grid">
+        <figure class="gallery-item animate-on-scroll delay-1">
+          <img src="images/gallery-1.jpg" alt="Produção de estampas para camisetas universitárias" loading="lazy" />
+          <figcaption>Produção artesanal</figcaption>
+        </figure>
+        <figure class="gallery-item gallery-item--tall animate-on-scroll delay-2">
+          <img src="images/gallery-2.jpg" alt="Estudantes universitários no campus" loading="lazy" />
+          <figcaption>Vida universitária</figcaption>
+        </figure>
+        <figure class="gallery-item animate-on-scroll delay-3">
+          <img src="images/gallery-3.jpg" alt="Formatura universitária com turma reunida" loading="lazy" />
+          <figcaption>Formatura & turmas</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- Collab -->
+  <section id="collab" class="collab">
+    <div class="container">
+      <div class="collab-grid">
+        <div class="collab-content animate-on-scroll">
+          <p class="section-label">Parcerias</p>
+          <h2 class="section-title">Collab <span class="text-gradient">Bixo Lab</span></h2>
+          <p>
+            Quer levar a identidade da Bixo Lab para o seu evento, atlética ou projeto? Fazemos parcerias
+            personalizadas com marcas, universidades e coletivos.
+          </p>
+          <p>
+            Criamos peças exclusivas que conectam sua comunidade com o estilo colegial que só a gente faz.
+          </p>
+
+          <div class="collab-features">
+            <div class="feature-item">
+              <div class="feature-icon"><i class="fa-solid fa-handshake"></i></div>
+              <div>
+                <strong>Parcerias exclusivas</strong>
+                <span>Designs únicos para o seu evento ou marca</span>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon"><i class="fa-solid fa-users"></i></div>
+              <div>
+                <strong>Produção em escala</strong>
+                <span>Do pedido pequeno ao grande lote para atléticas</span>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon"><i class="fa-solid fa-palette"></i></div>
+              <div>
+                <strong>Identidade visual</strong>
+                <span>Arte original alinhada com a sua marca</span>
+              </div>
+            </div>
+          </div>
+
+          <a href="https://wa.link/cqiozw" target="_blank" rel="noopener noreferrer" class="btn-primary">
+            <i class="fa-brands fa-whatsapp"></i> Quero fazer Collab
+          </a>
+        </div>
+
+        <div class="collab-visual animate-on-scroll delay-2">
+          <div class="collab-card glass-card">
+            <img src="images/collab-university.jpg" alt="Parcerias com universidades" loading="lazy" />
+            <span>Universidades</span>
+          </div>
+          <div class="collab-card glass-card">
+            <img src="images/collab-athletics.jpg" alt="Parcerias com atléticas" loading="lazy" />
+            <span>Atléticas</span>
+          </div>
+          <div class="collab-card glass-card">
+            <img src="images/collab-events.jpg" alt="Parcerias com eventos" loading="lazy" />
+            <span>Eventos</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Orçamento -->
+  <section id="orcamento" class="orcamento">
+    <div class="container">
+      <div class="cta-box animate-on-scroll">
+        <p class="section-label">Orçamento</p>
+        <h2>Pronto para criar o merch da sua turma?</h2>
+        <p>
+          Solicite um orçamento sem compromisso. Atendemos pedidos coletivos e individuais com condições
+          especiais para universitários.
+        </p>
+        <div class="cta-actions">
+          <a href="https://forms.gle/UrhEj3qoyig9MP3t8" target="_blank" rel="noopener noreferrer" class="btn-primary">
+            <i class="fa-solid fa-file-lines"></i> Solicitar Orçamento
+          </a>
+          <a href="https://wa.link/cqiozw" target="_blank" rel="noopener noreferrer" class="btn-outline">
+            <i class="fa-brands fa-whatsapp"></i> Falar no WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- O Lab -->
   <section id="o-lab" class="o-lab">
     <div class="container">
       <div class="lab-grid">
         <div class="lab-image animate-on-scroll delay-1">
           <div class="image-wrapper">
+            <img src="images/lab-store.jpg" alt="Loja de uniformes e camisetas universitárias" loading="lazy" />
             <div class="lab-overlay"></div>
-            <i class="fa-solid fa-store lab-icon"></i>
           </div>
         </div>
 
         <div class="lab-content animate-on-scroll delay-2">
-          <h2 class="section-title text-left">O <span class="text-gradient">LAB</span></h2>
+          <p class="section-label">Nossa história</p>
+          <h2 class="section-title text-left">O <span class="text-gradient">Lab</span></h2>
           <p class="lead-text">
-            Parece até que a gente tá chegando agora, mas na verdade a BIXO existe desde 2016.
+            Parece até que a gente tá chegando agora, mas na verdade a Bixo existe desde 2016.
           </p>
           <p>
-            Acompanhamos milhares de alunos em sua jornada acadêmica, fazendo o merch de centenas de clientes e assim
-            seguimos, agora pela primeira vez com uma loja física animal pra receber vocês, nossos queridos bixos e
-            bixetes. Nos vemos lá!
+            Acompanhamos milhares de alunos em sua jornada acadêmica, fazendo o merch de centenas de clientes e
+            assim seguimos, agora pela primeira vez com uma loja física animal pra receber vocês, nossos queridos
+            bixos e bixetes. Nos vemos lá!
           </p>
 
           <div class="location-box glass-card">
             <i class="fa-solid fa-location-dot"></i>
             <div>
               <strong>Nossa Loja</strong>
-              <span>Av Antonio Neto, 2688 - Divinópolis MG</span>
+              <span>Av Antonio Neto, 2688 — Divinópolis, MG</span>
             </div>
           </div>
         </div>
@@ -148,9 +299,15 @@
 
         <div class="footer-contact">
           <h4>Contato</h4>
-          <a href="mailto:contato@bixolab.com.br"><i class="fa-solid fa-envelope"></i> contato@bixolab.com.br</a>
-          <a href="https://wa.link/cqiozw"><i class="fa-brands fa-whatsapp"></i> (37) 99116-4812</a>
-          <a href="https://www.instagram.com/bixolab/"><i class="fa-brands fa-instagram"></i> @bixolab</a>
+          <a href="mailto:contato@bixolab.com.br">
+            <i class="fa-solid fa-envelope"></i> contato@bixolab.com.br
+          </a>
+          <a href="https://wa.link/cqiozw" target="_blank" rel="noopener noreferrer">
+            <i class="fa-brands fa-whatsapp"></i> (37) 99116-4812
+          </a>
+          <a href="https://www.instagram.com/bixolab/" target="_blank" rel="noopener noreferrer">
+            <i class="fa-brands fa-instagram"></i> @bixolab
+          </a>
         </div>
       </div>
 

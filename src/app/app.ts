@@ -1,4 +1,4 @@
-import { Component, signal, OnInit, HostListener, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, HostListener, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 
 @Component({
@@ -7,8 +7,8 @@ import { isPlatformBrowser } from '@angular/common';
   styleUrl: './app.scss',
 })
 export class App implements OnInit {
-  protected readonly title = signal('bixolab-frontend');
   isMobileMenuOpen = false;
+  isNavbarScrolled = false;
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
@@ -16,23 +16,36 @@ export class App implements OnInit {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
   }
 
+  closeMobileMenu() {
+    this.isMobileMenuOpen = false;
+  }
+
+  @HostListener('window:scroll')
+  onWindowScroll() {
+    if (isPlatformBrowser(this.platformId)) {
+      this.isNavbarScrolled = window.scrollY > 20;
+    }
+  }
+
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
+      this.isNavbarScrolled = window.scrollY > 20;
       this.initScrollAnimations();
     }
   }
 
   initScrollAnimations() {
     if (typeof window !== 'undefined' && typeof IntersectionObserver !== 'undefined') {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('in-view');
-            // Optional: unobserve if we want it to animate only once
-            // observer.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.1 });
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('in-view');
+            }
+          });
+        },
+        { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+      );
 
       setTimeout(() => {
         document.querySelectorAll('.animate-on-scroll').forEach((el) => {
