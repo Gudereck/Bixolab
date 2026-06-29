@@ -1,0 +1,92 @@
+/* Orçamento Component Styles */
+
+.orcamento {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(4rem, 8vw, 6rem) 0;
+
+  .cta-box {
+    position: relative;
+    text-align: center;
+    padding: clamp(3rem, 8vw, 5rem) clamp(2rem, 5vw, 4rem);
+    background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+    border-radius: var(--radius-lg);
+    color: var(--text-inverse);
+    overflow: hidden;
+    box-shadow: var(--glow-primary);
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    }
+
+    .section-label {
+      color: rgba(243, 239, 231, 0.8);
+      justify-content: center;
+
+      &::before {
+        background: rgba(243, 239, 231, 0.5);
+      }
+    }
+
+    h2 {
+      font-size: clamp(1.75rem, 4vw, 2.75rem);
+      margin-bottom: var(--space-md);
+      position: relative;
+    }
+
+    p {
+      font-size: clamp(1rem, 2vw, 1.125rem);
+      opacity: 0.9;
+      max-width: 520px;
+      margin: 0 auto var(--space-xl);
+      line-height: 1.7;
+      position: relative;
+    }
+
+    .cta-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-md);
+      justify-content: center;
+      position: relative;
+
+      .btn-primary {
+        background: var(--bg-primary);
+        color: var(--accent-primary);
+        box-shadow: var(--shadow-md);
+
+        &:hover {
+          background: var(--bg-elevated);
+          box-shadow: var(--shadow-lg);
+        }
+      }
+
+      .btn-outline {
+        border-color: rgba(243, 239, 231, 0.5);
+        color: var(--text-inverse);
+
+        &:hover {
+          background: rgba(243, 239, 231, 0.15);
+          border-color: var(--text-inverse);
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .orcamento {
+    .cta-actions {
+      flex-direction: column;
+      width: 100%;
+
+      .btn-primary,
+      .btn-outline {
+        width: 100%;
+      }
+    }
+  }
+}

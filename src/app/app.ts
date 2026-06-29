@@ -1,35 +1,27 @@
-import { Component, OnInit, HostListener, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+
+import { Header } from './header/header';
+import { Hero } from './hero/hero';
+import { ComoFunciona } from './como-funciona/como-funciona';
+import { Galeria } from './galeria/galeria';
+import { Collab } from './collab/collab';
+import { Orcamento } from './orcamento/orcamento';
+import { OLab } from './o-lab/o-lab';
+import { Footer } from './footer/footer';
 
 @Component({
   selector: 'app-root',
+  standalone: true,
+  imports: [Header, Hero, ComoFunciona, Galeria, Collab, Orcamento, OLab, Footer],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
 export class App implements OnInit {
-  isMobileMenuOpen = false;
-  isNavbarScrolled = false;
-
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
-
-  toggleMobileMenu() {
-    this.isMobileMenuOpen = !this.isMobileMenuOpen;
-  }
-
-  closeMobileMenu() {
-    this.isMobileMenuOpen = false;
-  }
-
-  @HostListener('window:scroll')
-  onWindowScroll() {
-    if (isPlatformBrowser(this.platformId)) {
-      this.isNavbarScrolled = window.scrollY > 20;
-    }
-  }
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
-      this.isNavbarScrolled = window.scrollY > 20;
       this.initScrollAnimations();
     }
   }

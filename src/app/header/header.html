@@ -1,0 +1,31 @@
+<!-- Navbar -->
+<header class="navbar" [class.scrolled]="isNavbarScrolled">
+  <div class="container nav-container">
+    <div class="logo">
+      <a href="#home">BIXO<span class="text-gradient">LAB</span></a>
+    </div>
+
+    <button
+      class="mobile-menu-toggle"
+      (click)="toggleMobileMenu()"
+      [attr.aria-expanded]="isMobileMenuOpen"
+      aria-label="Menu de navegação"
+    >
+      <i class="fa-solid" [class.fa-bars]="!isMobileMenuOpen" [class.fa-xmark]="isMobileMenuOpen"></i>
+    </button>
+
+    <nav class="nav-links" [class.active]="isMobileMenuOpen">
+      <a href="#home" (click)="closeMobileMenu()">Home</a>
+      <a href="#como-funciona" (click)="closeMobileMenu()">Como Funciona</a>
+      <a href="#collab" (click)="closeMobileMenu()">Collab</a>
+      <a href="#orcamento" (click)="closeMobileMenu()">Orçamento</a>
+      <a href="#o-lab" (click)="closeMobileMenu()">O Lab</a>
+    </nav>
+
+    <div class="nav-actions">
+      <a href="https://wa.link/cqiozw" target="_blank" rel="noopener noreferrer" class="nav-btn-outline">
+        <i class="fa-brands fa-whatsapp"></i> Fale com a gente
+      </a>
+    </div>
+  </div>
+</header>

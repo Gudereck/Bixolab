@@ -1,0 +1,155 @@
+<section id="como-funciona" class="como-funciona">
+  <div class="container">
+    <p class="section-label">Processo</p>
+    <h2 class="section-title">Como <span class="text-gradient">Funciona</span></h2>
+    <p class="section-subtitle">
+      Do design à entrega, cuidamos de cada detalhe para que sua turma tenha o merch perfeito.
+    </p>
+
+    <!-- Cards de Processo Originais -->
+    <div class="steps-grid">
+      <div class="step-card glass-card animate-on-scroll delay-1">
+        <span class="step-number">01</span>
+        <div class="step-icon"><i class="fa-solid fa-pen-nib"></i></div>
+        <h3>Design</h3>
+        <p>Nossa equipe cria a arte perfeita que representa a sua turma ou curso com um estilo colegial premium.</p>
+      </div>
+
+      <div class="step-card glass-card animate-on-scroll delay-2">
+        <span class="step-number">02</span>
+        <div class="step-icon"><i class="fa-solid fa-clipboard-check"></i></div>
+        <h3>Orçamento</h3>
+        <p>Fazemos orçamentos para pedidos coletivos ou individuais, adequados para o bolso do universitário.</p>
+      </div>
+
+      <div class="step-card glass-card animate-on-scroll delay-3">
+        <span class="step-number">03</span>
+        <div class="step-icon"><i class="fa-solid fa-box-open"></i></div>
+        <h3>Produção & Entrega</h3>
+        <p>Usamos tecidos e estampas de alta qualidade para garantir que as camisetas durem toda a faculdade.</p>
+      </div>
+    </div>
+
+    <!-- Nova seção de tipo de pedido -->
+    <div class="order-type-section animate-on-scroll delay-2">
+      <h3 class="order-section-title">Como pedir seu merch</h3>
+      <p class="order-section-subtitle">Temos condições e fluxos diferentes para pedidos individuais ou em grupo.</p>
+
+      <!-- Abas (Tabs) -->
+      <div class="tabs-container">
+        <button 
+          class="tab-btn" 
+          [class.active]="activeTab === 'coletivo'" 
+          (click)="setTab('coletivo')"
+          type="button"
+        >
+          <i class="fa-solid fa-users"></i> Pedido Coletivo (Turma)
+        </button>
+        <button 
+          class="tab-btn" 
+          [class.active]="activeTab === 'individual'" 
+          (click)="setTab('individual')"
+          type="button"
+        >
+          <i class="fa-solid fa-shirt"></i> Pedido Individual
+        </button>
+      </div>
+
+      <!-- Conteúdo da Aba Ativa -->
+      <div class="tab-content-wrapper glass-card">
+        
+        <!-- Conteúdo Pedido Coletivo -->
+        @if (activeTab === 'coletivo') {
+          <div class="tab-pane">
+            <div class="pane-header">
+              <span class="badge-role"><i class="fa-solid fa-graduation-cap"></i> Fluxo Coletivo</span>
+              <h4>Vai pedir em grupo? Bora organizar isso do jeito certo.</h4>
+              <p>
+                Para pedidos coletivos, nós trabalhamos com um intermediário principal — o nosso <strong>REPRESENTANTE</strong>. 
+                É ele quem representa a turma, reúne os interesses e entra em contato com a gente para dar início ao processo.
+              </p>
+            </div>
+
+            <div class="timeline-container">
+              <h5 class="timeline-title">
+                <i class="fa-solid fa-bezier-curve"></i> Segue o Fio
+              </h5>
+              
+              <div class="timeline-steps">
+                <div class="timeline-step">
+                  <div class="step-index-circle">1</div>
+                  <div class="step-content">
+                    <p>O <strong>REPRESENTANTE</strong> chega no WhatsApp da <strong>BIXO</strong> com um pedido mínimo de <strong>20 camisetas</strong>.</p>
+                  </div>
+                </div>
+
+                <div class="timeline-step">
+                  <div class="step-index-circle">2</div>
+                  <div class="step-content">
+                    <p>A gente define em conjunto todos os detalhes da <strong>estampa + preferências</strong> da turma.</p>
+                  </div>
+                </div>
+
+                <div class="timeline-step">
+                  <div class="step-index-circle">3</div>
+                  <div class="step-content">
+                    <p>Geramos uma <strong>chave do pedido</strong> exclusiva. Ela vai servir para acompanhar <strong>T-U-D-O</strong> até a entrega.</p>
+                  </div>
+                </div>
+
+                <div class="timeline-step">
+                  <div class="step-index-circle">4</div>
+                  <div class="step-content">
+                    <p>Cada pessoa da turma preenche individualmente o nosso <strong>formulário</strong> de pedido usando essa chave.</p>
+                  </div>
+                </div>
+
+                <div class="timeline-step">
+                  <div class="step-index-circle">5</div>
+                  <div class="step-content">
+                    <p>Fazemos a parte do acerto inicial, de <strong>50%</strong>. O pagamento pode ser feito no cartão ou via Pix.</p>
+                  </div>
+                </div>
+
+                <div class="timeline-step">
+                  <div class="step-index-circle">6</div>
+                  <div class="step-content">
+                    <p>Quando todo mundo tiver enviado os pedidos e o pagamento (cash), a produção começa oficialmente no <strong>LAB</strong>.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="delivery-notice">
+              <i class="fa-regular fa-clock"></i>
+              <span>O prazo de entrega é de <strong>15 a 20 dias úteis</strong> após o fechamento do pedido (a combinar).</span>
+            </div>
+          </div>
+        }
+        
+
+        <!-- Conteúdo Pedido Individual -->
+        @if (activeTab === 'individual') {
+          <div class="tab-pane">
+            <div class="pane-header">
+              <span class="badge-role"><i class="fa-solid fa-bag-shopping"></i> Pronta-Entrega</span>
+              <h4>Se você quer só uma camiseta para chamar de sua:</h4>
+              <p>
+                Não tem problema! Fale diretamente com a nossa equipe no WhatsApp. 
+                Nós te passamos todos os modelos disponíveis em pronta-entrega e combinamos tudo por lá com rapidez e facilidade.
+              </p>
+            </div>
+            
+            <div class="cta-individual-wrapper">
+              <a href="https://wa.link/cqiozw" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
+                <i class="fa-brands fa-whatsapp"></i> Falar com a gente
+              </a>
+            </div>
+          </div>
+        }
+
+      </div>
+    </div>
+
+  </div>
+</section>
