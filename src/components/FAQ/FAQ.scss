@@ -47,9 +47,9 @@
     text-align: left;
     font-family: var(--font-heading);
     font-size: clamp(0.95rem, 2vw, 1.15rem);
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
+    font-weight: 700;
+    text-transform: none;
+    letter-spacing: 0;
     color: var(--text-primary);
     cursor: pointer;
     gap: var(--space-md);

@@ -176,6 +176,9 @@
 
     h4 {
       font-size: clamp(1.25rem, 3vw, 1.6rem);
+      font-weight: 700;
+      text-transform: none;
+      letter-spacing: 0;
       color: var(--text-primary);
       margin: var(--space-md) 0 var(--space-sm);
     }
