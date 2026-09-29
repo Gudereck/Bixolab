@@ -95,6 +95,27 @@ export const cursos: Curso[] = [
     cor: '#6b2a5a',
     descricao: 'Peças de turma para o curso que tem o sorriso mais bonito da faculdade.',
   },
+  {
+    slug: 'nutricao',
+    nome: 'Nutrição',
+    estampa: 'NUTRI',
+    cor: '#5c7a2b',
+    descricao: 'Camisetas de turma para quem sabe o que come e ainda leva o lanche mais bonito da sala.',
+  },
+  {
+    slug: 'enfermagem',
+    nome: 'Enfermagem',
+    estampa: 'ENF',
+    cor: '#1f6f78',
+    descricao: 'Peças de turma para quem cuida de todo mundo, do estágio ao plantão.',
+  },
+  {
+    slug: 'farmacia',
+    nome: 'Farmácia',
+    estampa: 'FARMÁCIA',
+    cor: '#a8452f',
+    descricao: 'Camisetas de turma para quem domina o laboratório e as fórmulas.',
+  },
 ];
 
 /** Peças que não são de um curso específico (bonés, canecas, acessórios…). */

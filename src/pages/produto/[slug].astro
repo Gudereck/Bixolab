@@ -239,6 +239,7 @@ const og = fotos[0] ? (await getImage({ src: fotos[0], width: 1200, format: 'jpg
 
   .produto__nome {
     margin-top: var(--s-2);
+    line-height: 1; /* espaço para acentos em caixa alta (Á, Ç, Ã) */
     font-size: clamp(2.75rem, 6vw, 4.75rem);
   }
   .produto__preco {

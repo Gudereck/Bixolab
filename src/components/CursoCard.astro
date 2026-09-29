@@ -65,7 +65,7 @@ const tinta = corEstampa(curso.cor);
     right: -14%;
     bottom: -20%;
     z-index: -1;
-    width: 78%;
+    width: min(78%, 9rem);
     transform: rotate(-8deg);
     transition: transform 400ms var(--ease-out);
   }
@@ -96,6 +96,12 @@ const tinta = corEstampa(curso.cor);
     }
     .curso__nome {
       font-size: clamp(1.75rem, 2.9vw, 2.6rem);
+    }
+    /* A camiseta fica abaixo da linha do nome para não cobrir o texto. */
+    .curso__art {
+      right: -8%;
+      bottom: -40%;
+      width: min(60%, 15rem);
     }
     .curso__seta {
       left: var(--s-5);
