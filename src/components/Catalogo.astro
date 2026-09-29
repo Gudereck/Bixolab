@@ -1,0 +1,186 @@
+---
+import ProductCard from './ProductCard.astro';
+import Icon from './Icon.astro';
+import { linkWhatsApp } from '../lib/whatsapp';
+import { colecoes, type Curso } from '../data/loja';
+import type { Produto } from '../lib/produtos';
+
+interface Props {
+  produtos: Produto[];
+  todos: Produto[];
+  atual?: Curso;
+}
+const { produtos, todos, atual } = Astro.props;
+const eCurso = atual && atual.slug !== 'colecao-bixo';
+const total = (slug?: string) => (slug ? todos.filter((p) => p.data.curso === slug).length : todos.length);
+---
+
+<section class="catalogo">
+  <div class="container">
+    <nav class="migalhas" aria-label="Você está em">
+      <a href="/">Início</a>
+      <span aria-hidden="true">/</span>
+      {atual ? <a href="/catalogo">Catálogo</a> : <span aria-current="page">Catálogo</span>}
+      {atual && (
+        <>
+          <span aria-hidden="true">/</span>
+          <span aria-current="page">{atual.nome}</span>
+        </>
+      )}
+    </nav>
+
+    <header class="catalogo__head">
+      <h1 class="catalogo__titulo display">{atual ? atual.nome : 'Catálogo'}</h1>
+      <p class="section-lead">
+        {atual ? atual.descricao : 'Camisetas de turma de cada curso e a Coleção Bixo. Escolha a sua e peça pelo WhatsApp.'}
+      </p>
+    </header>
+
+    <nav class="filtros" aria-label="Cursos">
+      <a href="/catalogo" aria-current={!atual ? 'page' : undefined}>Tudo <span>{total()}</span></a>
+      {colecoes.map((c) => (
+        <a href={`/catalogo/${c.slug}`} aria-current={atual?.slug === c.slug ? 'page' : undefined}>
+          {c.nome} <span>{total(c.slug)}</span>
+        </a>
+      ))}
+    </nav>
+
+    {produtos.length ? (
+      <div class="grid-produtos">
+        {produtos.map((p, i) => <ProductCard produto={p} indice={i} />)}
+      </div>
+    ) : (
+      <p class="vazio">Ainda não tem peças deste curso no catálogo. Chama no WhatsApp que a gente cria a da sua turma.</p>
+    )}
+
+    {eCurso && (
+      <aside class="personalize">
+        <div>
+          <h2 class="personalize__titulo display">Quer a da sua turma de {atual.nome}?</h2>
+          <p>A gente cria a arte com o ano, a faculdade e o que a turma quiser. Pedidos a partir de 20 peças.</p>
+        </div>
+        <a
+          href={linkWhatsApp(`Oi, Bixo Lab! Quero fazer camisetas de turma de ${atual.nome}.`)}
+          class="btn btn--lg btn--accent"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Icon name="whatsapp" /> Pedir orçamento
+        </a>
+      </aside>
+    )}
+  </div>
+</section>
+
+<style>
+  .catalogo {
+    padding-block: var(--s-6) clamp(var(--s-8), 10vw, 8rem);
+  }
+  .migalhas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+    font-size: 0.875rem;
+    color: var(--text-muted);
+  }
+  .migalhas a {
+    text-decoration: none;
+  }
+  .migalhas a:hover {
+    text-decoration: underline;
+  }
+  .migalhas [aria-current] {
+    color: var(--text);
+    font-weight: 600;
+  }
+  .catalogo__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: var(--s-4);
+    margin-top: var(--s-5);
+  }
+  .catalogo__titulo {
+    font-size: clamp(3.5rem, 11vw, 8rem);
+  }
+  .filtros {
+    display: flex;
+    gap: var(--s-2);
+    margin: var(--s-6) calc(var(--gutter) * -1) var(--s-7);
+    padding: var(--s-1) var(--gutter);
+    overflow-x: auto;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+  }
+  .filtros::-webkit-scrollbar {
+    display: none;
+  }
+  @media (min-width: 768px) {
+    .filtros {
+      flex-wrap: wrap;
+      overflow: visible;
+    }
+  }
+  .filtros a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    flex: none;
+    min-height: 2.75rem;
+    padding: 0 var(--s-4);
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      background-color 200ms ease,
+      color 200ms ease,
+      transform 160ms var(--ease-out);
+  }
+  .filtros a:active {
+    transform: scale(0.97);
+  }
+  .filtros a span {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    opacity: 0.7;
+    font-variant-numeric: tabular-nums;
+  }
+  .filtros a[aria-current='page'] {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .filtros a:not([aria-current='page']):hover {
+      background: var(--gold);
+    }
+  }
+  .personalize {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-5);
+    margin-top: var(--s-8);
+    padding: var(--s-6);
+    border-radius: var(--radius-lg);
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .personalize__titulo {
+    font-size: clamp(2rem, 4vw, 3rem);
+    color: var(--gold);
+  }
+  .personalize p {
+    max-width: 34rem;
+    margin-top: var(--s-3);
+    color: rgb(245 242 234 / 0.85);
+  }
+  .vazio {
+    max-width: 36rem;
+    color: var(--text-2);
+  }
+</style>

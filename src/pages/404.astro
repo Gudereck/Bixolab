@@ -1,0 +1,45 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { DINO_PATH } from '../components/DinoPath';
+---
+
+<Base titulo="Página não encontrada">
+  <section class="nf container">
+    <svg class="nf__dino" viewBox="-20 -20 540 454" aria-hidden="true">
+      <path d={DINO_PATH} fill="var(--gold)" stroke="var(--ink)" stroke-width="14" stroke-linejoin="round"></path>
+    </svg>
+    <h1 class="display nf__titulo">Esse bixo<br />se perdeu.</h1>
+    <p>A página que você procurou não existe ou mudou de lugar.</p>
+    <div class="nf__ctas">
+      <a href="/catalogo" class="btn btn--lg">Ver catálogo <Icon name="arrow-right" /></a>
+      <a href="/" class="btn btn--lg btn--ghost">Voltar ao início</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    display: grid;
+    justify-items: center;
+    gap: var(--s-5);
+    padding-block: var(--s-9);
+    text-align: center;
+  }
+  .nf__dino {
+    width: 9rem;
+    transform: rotate(-12deg);
+  }
+  .nf__titulo {
+    font-size: clamp(3rem, 9vw, 6rem);
+  }
+  .nf p {
+    color: var(--text-2);
+  }
+  .nf__ctas {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--s-3);
+  }
+</style>

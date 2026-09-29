@@ -1,0 +1,126 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import { loja, colecoes } from '../data/loja';
+import { linkWhatsApp } from '../lib/whatsapp';
+const ano = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container">
+    <p class="footer__slogan display" aria-hidden="true">Bixo hoje,<br />lenda amanhã.</p>
+
+    <div class="footer__grid">
+      <div class="footer__marca">
+        <Logo />
+        <p>Camisetas de turma desde {loja.desde}. Direito, Medicina, Engenharia e todos os cursos da sua faculdade.</p>
+      </div>
+
+      <nav aria-label="Cursos">
+        <h2 class="footer__titulo">Catálogo</h2>
+        <ul>
+          <li><a href="/catalogo">Todas as peças</a></li>
+          {colecoes.map((c) => <li><a href={`/catalogo/${c.slug}`}>{c.nome}</a></li>)}
+        </ul>
+      </nav>
+
+      <div>
+        <h2 class="footer__titulo">Contato</h2>
+        <ul>
+          <li><a href={linkWhatsApp()} target="_blank" rel="noopener noreferrer"><Icon name="whatsapp" /> {loja.whatsapp.exibicao}</a></li>
+          <li><a href={loja.instagram.url} target="_blank" rel="noopener noreferrer"><Icon name="instagram" /> {loja.instagram.usuario}</a></li>
+          <li><a href={`mailto:${loja.email}`}><Icon name="mail" /> {loja.email}</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="footer__titulo">Loja física</h2>
+        <address>
+          <a href={loja.endereco.mapa} target="_blank" rel="noopener noreferrer">
+            <Icon name="map-pin" />
+            <span>{loja.endereco.linha}<br />{loja.endereco.cidade}</span>
+          </a>
+        </address>
+      </div>
+    </div>
+
+    <div class="footer__base">
+      <p>© {ano} {loja.nome}. Todos os direitos reservados.</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--green);
+    color: var(--paper);
+    padding-top: var(--s-8);
+  }
+  .footer__slogan {
+    font-size: clamp(3.25rem, 13vw, 11rem);
+    color: var(--gold);
+    margin-bottom: var(--s-8);
+  }
+  .footer__grid {
+    display: grid;
+    gap: var(--s-6);
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    padding-bottom: var(--s-7);
+  }
+  .footer__marca :global(.logo),
+  .footer__marca :global(.logo__dino),
+  .footer__marca :global(.logo__txt span) {
+    color: var(--paper);
+  }
+  .footer__marca p {
+    margin-top: var(--s-4);
+    max-width: 22rem;
+    color: rgb(245 242 234 / 0.8);
+  }
+  .footer__titulo {
+    margin-bottom: var(--s-3);
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  li + li {
+    margin-top: var(--s-1);
+  }
+  address {
+    font-style: normal;
+  }
+  a {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: var(--s-2);
+    min-height: 2rem;
+    padding-block: var(--s-1);
+    text-decoration: none;
+    color: rgb(245 242 234 / 0.9);
+  }
+  a :global(svg) {
+    width: 1.1rem;
+    height: 1.1rem;
+    margin-top: 0.2rem;
+    flex: none;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    a:hover {
+      color: var(--gold);
+    }
+  }
+  .footer__base {
+    padding-block: var(--s-5);
+    border-top: 1px solid rgb(245 242 234 / 0.2);
+    font-size: 0.875rem;
+    color: rgb(245 242 234 / 0.7);
+  }
+</style>

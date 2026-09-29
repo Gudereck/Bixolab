@@ -1,0 +1,104 @@
+---
+// Pata de dinossauro em 3D (Three.js). O dino 2D da marca aparece até o WebGL carregar
+// e continua como fallback se o navegador não tiver WebGL.
+import { DINO_PATH } from './DinoPath';
+
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+---
+
+<div class:list={['dino3d', className]} data-dino3d>
+  <svg class="dino3d__fallback" viewBox="-20 -20 540 454" aria-hidden="true">
+    <path d={DINO_PATH} fill="var(--gold)" stroke="var(--ink)" stroke-width="14" stroke-linejoin="round"></path>
+  </svg>
+  <button class="dino3d__stage" type="button" aria-label="Fazer a pata pisar" hidden></button>
+  <p class="dino3d__hint" aria-hidden="true">Toque na pata</p>
+</div>
+
+<style>
+  .dino3d {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .dino3d__fallback {
+    position: absolute;
+    inset: 18% 14%;
+    width: 72%;
+    height: 64%;
+    margin: auto;
+    transition: opacity 400ms ease;
+  }
+
+  .dino3d__stage {
+    position: absolute;
+    inset: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 500ms var(--ease-out);
+    touch-action: manipulation;
+  }
+
+  .dino3d__stage :global(canvas) {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .dino3d__stage:focus-visible {
+    outline-color: var(--gold);
+    outline-offset: -6px;
+    border-radius: var(--radius-lg);
+  }
+
+  .dino3d__hint {
+    position: absolute;
+    left: 50%;
+    bottom: var(--s-4);
+    translate: -50% 0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgb(245 242 234 / 0.7);
+    opacity: 0;
+    transition: opacity 400ms ease 600ms;
+    pointer-events: none;
+  }
+
+  .dino3d.is-ready .dino3d__stage,
+  .dino3d.is-ready .dino3d__hint {
+    opacity: 1;
+  }
+
+  .dino3d.is-ready .dino3d__fallback {
+    opacity: 0;
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-dino3d]');
+  const stage = root?.querySelector<HTMLButtonElement>('.dino3d__stage');
+
+  function suportaWebGL() {
+    try {
+      const c = document.createElement('canvas');
+      return !!(c.getContext('webgl2') || c.getContext('webgl'));
+    } catch {
+      return false;
+    }
+  }
+
+  if (root && stage && suportaWebGL()) {
+    // Carrega o Three.js só depois da página pronta, para não atrasar o conteúdo.
+    const agendar = window.requestIdleCallback ?? ((cb: () => void) => setTimeout(cb, 200));
+    const carregar = () => agendar(() => import('../scripts/dino-cena').then((m) => m.iniciarDino(root, stage)).catch(() => {}));
+    if (document.readyState === 'complete') carregar();
+    else window.addEventListener('load', carregar, { once: true });
+  }
+</script>

@@ -1,0 +1,173 @@
+---
+// Ilustração flat da peça, pintada na cor escolhida.
+// Usada enquanto o produto não tem fotos reais em `fotos`.
+import type { Modelo } from '../data/loja';
+import { ajustar, corEstampa } from '../lib/cor';
+import { DINO_PATH } from './DinoPath';
+
+interface Props {
+  modelo: Modelo;
+  cor: string;
+  estampa?: string;
+  /** Linha menor abaixo da estampa, ex.: "TURMA 2026". */
+  subestampa?: string;
+  label?: string;
+  class?: string;
+}
+
+const { modelo, cor, estampa = 'BIXO', subestampa, label, class: className } = Astro.props;
+
+const INK = '#141613';
+const sombra = ajustar(cor, 0.8);
+const fundo = ajustar(cor, 0.6);
+const tinta = corEstampa(cor);
+
+// Onde a estampa fica em cada modelo: centro (x, y) e largura máxima.
+const areas: Record<Modelo, { x: number; y: number; w: number }> = {
+  camiseta: { x: 200, y: 172, w: 116 },
+  regata: { x: 200, y: 200, w: 96 },
+  moletom: { x: 200, y: 208, w: 104 },
+  'moletom-careca': { x: 200, y: 180, w: 132 },
+  bone: { x: 204, y: 190, w: 76 },
+  caneca: { x: 203, y: 214, w: 112 },
+  copo: { x: 200, y: 206, w: 86 },
+  ecobag: { x: 200, y: 262, w: 132 },
+  adesivos: { x: 0, y: 0, w: 0 },
+};
+const area = areas[modelo];
+const eDino = estampa.toLowerCase() === 'dino';
+// Anton tem ~0.46em de largura média por caractere em caixa alta.
+const tamanhoFonte = Math.min(area.w * 0.62, area.w / (Math.max(estampa.length, 1) * 0.46));
+const tamanhoSub = subestampa ? Math.min(tamanhoFonte * 0.36, area.w / (subestampa.length * 0.62)) : 0;
+// Com subestampa, sobe a linha principal para o bloco ficar centralizado.
+const yEstampa = area.y - (subestampa ? tamanhoSub * 0.75 : 0);
+const ySub = yEstampa + tamanhoFonte * 0.52 + tamanhoSub * 0.75;
+const dinoW = area.w * 0.9;
+const dinoH = dinoW * (414.46 / 500);
+
+const stroke = { stroke: INK, 'stroke-width': 3, 'stroke-linejoin': 'round' } as const;
+---
+
+<svg class={className} viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" role={label ? 'img' : undefined} aria-label={label} aria-hidden={label ? undefined : 'true'}>
+  {label && <title>{label}</title>}
+  <ellipse cx="200" cy="368" rx="132" ry="9" fill={INK} opacity="0.08"></ellipse>
+
+  {modelo === 'camiseta' && (
+    <g>
+      <path
+        d="M150 62 L106 78 Q84 86 70 104 L40 150 L88 180 L112 152 L112 338 Q112 346 120 346 L280 346 Q288 346 288 338 L288 152 L312 180 L360 150 L330 104 Q316 86 294 78 L250 62 Q240 92 200 92 Q160 92 150 62 Z"
+        fill={cor}
+        {...stroke}
+      />
+      <path d="M150 62 Q160 92 200 92 Q240 92 250 62 L240 60 Q232 80 200 80 Q168 80 160 60 Z" fill={sombra} {...stroke} />
+    </g>
+  )}
+
+  {modelo === 'regata' && (
+    <g>
+      <path
+        d="M152 48 L176 48 Q180 118 200 118 Q220 118 224 48 L248 48 Q254 112 292 138 L292 338 Q292 346 284 346 L116 346 Q108 346 108 338 L108 138 Q146 112 152 48 Z"
+        fill={cor}
+        {...stroke}
+      />
+      <path
+        d="M178 50 Q182 112 200 112 Q218 112 222 50 M154 50 Q148 110 112 134 M246 50 Q252 110 288 134"
+        fill="none"
+        stroke={sombra}
+        stroke-width="7"
+        stroke-linecap="round"
+      />
+    </g>
+  )}
+
+  {(modelo === 'moletom' || modelo === 'moletom-careca') && (
+    <g>
+      <path
+        d="M148 84 L104 98 Q76 108 68 140 L48 300 Q47 310 56 312 L86 316 Q94 317 95 308 L112 190 L112 322 L288 322 L288 190 L305 308 Q306 317 314 316 L344 312 Q353 310 352 300 L332 140 Q324 108 296 98 L252 84 Q236 106 200 106 Q164 106 148 84 Z"
+        fill={cor}
+        {...stroke}
+      />
+      <rect x="112" y="318" width="176" height="26" rx="4" fill={sombra} {...stroke} />
+      <path d="M50 290 L94 296 M350 290 L306 296" stroke={INK} stroke-width="3" />
+      {modelo === 'moletom' ? (
+        <g>
+          <path d="M146 258 L254 258 L270 318 L130 318 Z" fill={sombra} {...stroke} />
+          <path d="M148 86 Q144 36 200 34 Q256 36 252 86 Q246 116 200 118 Q154 116 148 86 Z" fill={sombra} {...stroke} />
+          <path d="M168 86 Q170 60 200 58 Q230 60 232 86 Q226 102 200 103 Q174 102 168 86 Z" fill={fundo} {...stroke} />
+          <path d="M186 114 L183 158 M214 114 L217 158" stroke={tinta} stroke-width="3.5" stroke-linecap="round" />
+        </g>
+      ) : (
+        <path d="M148 84 Q164 106 200 106 Q236 106 252 84" fill="none" stroke={sombra} stroke-width="9" stroke-linecap="round" />
+      )}
+    </g>
+  )}
+
+  {modelo === 'bone' && (
+    <g>
+      <path d="M104 236 Q100 128 204 118 Q308 128 304 236 Z" fill={cor} {...stroke} />
+      <path d="M204 120 Q178 170 172 234 M204 120 Q230 170 236 234" fill="none" stroke={sombra} stroke-width="3" />
+      <circle cx="204" cy="118" r="8" fill={sombra} {...stroke} />
+      <path
+        d="M92 232 Q204 214 316 232 Q330 236 326 248 Q300 282 204 284 Q108 282 82 248 Q78 236 92 232 Z"
+        fill={sombra}
+        {...stroke}
+      />
+    </g>
+  )}
+
+  {modelo === 'caneca' && (
+    <g>
+      <path d="M288 152 Q350 152 350 212 Q350 272 288 272" fill="none" stroke={INK} stroke-width="32" />
+      <path d="M288 152 Q350 152 350 212 Q350 272 288 272" fill="none" stroke={cor} stroke-width="25" />
+      <rect x="118" y="108" width="170" height="210" rx="18" fill={cor} {...stroke} />
+      <ellipse cx="203" cy="110" rx="84" ry="11" fill={sombra} {...stroke} />
+    </g>
+  )}
+
+  {modelo === 'copo' && (
+    <g>
+      <path d="M136 70 L264 70 L248 338 Q247 346 239 346 L161 346 Q153 346 152 338 Z" fill={cor} {...stroke} />
+      <ellipse cx="200" cy="70" rx="64" ry="9" fill={sombra} {...stroke} />
+      <path d="M156 96 L166 318" stroke="#ffffff" stroke-opacity="0.45" stroke-width="8" stroke-linecap="round" />
+    </g>
+  )}
+
+  {modelo === 'ecobag' && (
+    <g>
+      <path d="M150 162 Q150 64 200 64 Q250 64 250 162" fill="none" stroke={INK} stroke-width="18" />
+      <path d="M150 162 Q150 64 200 64 Q250 64 250 162" fill="none" stroke={sombra} stroke-width="12" />
+      <path d="M104 156 L296 156 L306 342 Q306 350 298 350 L102 350 Q94 350 94 342 Z" fill={cor} {...stroke} />
+      <path d="M104 172 L296 172" stroke={sombra} stroke-width="3" stroke-dasharray="6 6" />
+    </g>
+  )}
+
+  {modelo === 'adesivos' && (
+    <g>
+      <g transform="rotate(-10 292 112)">
+        <circle cx="292" cy="112" r="50" fill={cor} {...stroke} />
+        <text x="292" y="112" text-anchor="middle" dominant-baseline="central" font-family="Anton, Impact, sans-serif" font-size="34" fill={corEstampa(cor)}>LAB</text>
+      </g>
+      <circle cx="166" cy="176" r="96" fill="#f5f2ea" {...stroke} />
+      <svg x="96" y="118" width="140" height="116" viewBox="0 0 500 414.46">
+        <path d={DINO_PATH} fill={cor} />
+      </svg>
+      <g transform="rotate(9 272 262)">
+        <rect x="192" y="214" width="160" height="96" rx="48" fill="#e9b63b" {...stroke} />
+        <text x="272" y="262" text-anchor="middle" dominant-baseline="central" font-family="Anton, Impact, sans-serif" font-size="54" fill={INK}>BIXO</text>
+      </g>
+    </g>
+  )}
+
+  {modelo !== 'adesivos' && (eDino ? (
+    <svg x={area.x - dinoW / 2} y={area.y - dinoH / 2} width={dinoW} height={dinoH} viewBox="0 0 500 414.46">
+      <path d={DINO_PATH} fill={tinta} />
+    </svg>
+  ) : (
+    <g fill={tinta} font-family="Anton, Impact, sans-serif" text-anchor="middle" dominant-baseline="central">
+      <text x={area.x} y={yEstampa} font-size={tamanhoFonte.toFixed(1)} letter-spacing="1">{estampa}</text>
+      {subestampa && (
+        <text x={area.x} y={ySub} font-size={tamanhoSub.toFixed(1)} letter-spacing="2">{subestampa}</text>
+      )}
+    </g>
+  ))}
+</svg>

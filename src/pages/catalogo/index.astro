@@ -1,0 +1,11 @@
+---
+import Base from '../../layouts/Base.astro';
+import Catalogo from '../../components/Catalogo.astro';
+import { listarProdutos } from '../../lib/produtos';
+
+const produtos = await listarProdutos();
+---
+
+<Base titulo="Catálogo" descricao="Todas as peças da Bixo Lab: camisetas, moletons, bonés, canecas, copos e acessórios. Peça pelo WhatsApp.">
+  <Catalogo produtos={produtos} todos={produtos} />
+</Base>
