@@ -1,0 +1,551 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Dino3D from '../components/Dino3D.astro';
+import Icon from '../components/Icon.astro';
+import ProductCard from '../components/ProductCard.astro';
+import CategoryCard from '../components/CategoryCard.astro';
+import { DINO_PATH } from '../components/DinoPath';
+import { loja, categorias } from '../data/loja';
+import { listarProdutos } from '../lib/produtos';
+import { linkWhatsApp } from '../lib/whatsapp';
+import fotoTurma from '../assets/fotos/hero-shirt.jpg';
+import fotoLoja from '../assets/fotos/lab-store.jpg';
+
+const produtos = await listarProdutos();
+const destaques = produtos.filter((p) => p.data.destaque).slice(0, 8);
+const totalPorCategoria = (slug: string) => produtos.filter((p) => p.data.categoria === slug).length;
+
+const faixa = ['Camisetas', 'Moletons', 'Bonés', 'Canecas', 'Copos', 'Ecobags', 'Adesivos', 'Turmas', 'Atléticas'];
+
+const passos = [
+  { titulo: 'Escolha a peça', texto: 'Navegue pelo catálogo e veja cores, tamanhos e detalhes de cada produto.' },
+  { titulo: 'Chame no WhatsApp', texto: 'O botão da peça já abre a conversa com o modelo, a cor e o tamanho escolhidos.' },
+  { titulo: 'A gente finaliza', texto: 'Confirmamos disponibilidade, pagamento e entrega ou retirada na loja.' },
+];
+
+const duvidas = [
+  {
+    pergunta: 'Como faço um pedido?',
+    resposta:
+      'Escolha a peça no catálogo, selecione cor e tamanho e toque em “Pedir no WhatsApp”. A mensagem já vai pronta; é só enviar que a gente responde por lá.',
+  },
+  {
+    pergunta: 'Qual é o pedido mínimo para turmas?',
+    resposta:
+      'O pedido mínimo para pedidos coletivos (turma/curso) é de 20 camisetas do mesmo modelo e cor. Isso nos permite garantir os preços especiais de atacado.',
+  },
+  {
+    pergunta: 'Vocês criam a estampa ou eu preciso enviar pronta?',
+    resposta:
+      'Nós criamos a arte para você! Após fechar o pedido, nossa equipe de design desenvolve a estampa de forma 100% personalizada e sem custo adicional.',
+  },
+  {
+    pergunta: 'Qual é o prazo de entrega de pedidos coletivos?',
+    resposta:
+      'O prazo padrão de produção é de 15 a 20 dias úteis a partir do momento em que todos os pedidos individuais da turma são preenchidos e o sinal de 50% é confirmado.',
+  },
+  {
+    pergunta: 'Quais são as formas de pagamento?',
+    resposta: 'Aceitamos Pix, boleto bancário e cartões de crédito. Nos pedidos de turma, cada pessoa pode pagar individualmente.',
+  },
+];
+---
+
+<Base>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container hero__grid">
+      <div class="hero__txt">
+        <p class="eyebrow">Merch universitário · desde {loja.desde}</p>
+        <h1 class="hero__titulo display">
+          Bixo hoje,<br /><span>lenda</span><br />amanhã.
+        </h1>
+        <p class="hero__lead">
+          Camisetas, moletons, bonés, canecas e acessórios para a fase mais legal da sua vida. Escolha a peça e peça direto pelo WhatsApp.
+        </p>
+        <div class="hero__ctas">
+          <a href="/catalogo" class="btn btn--lg">Ver catálogo <Icon name="arrow-right" /></a>
+          <a href={linkWhatsApp()} class="btn btn--lg btn--ghost" target="_blank" rel="noopener noreferrer">
+            <Icon name="whatsapp" /> Falar no WhatsApp
+          </a>
+        </div>
+      </div>
+
+      <div class="hero__palco">
+        <Dino3D />
+        <span class="hero__selo" aria-hidden="true">
+          <svg viewBox="0 0 120 120">
+            <defs><path id="circulo" d="M60 60 m-44 0 a44 44 0 1 1 88 0 a44 44 0 1 1 -88 0"></path></defs>
+            <text><textPath href="#circulo">Bixo Lab • Desde {loja.desde} • Divinópolis •</textPath></text>
+          </svg>
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAIXA -->
+  <div class="faixa" aria-hidden="true">
+    {[0, 1].map(() => (
+      <div class="faixa__trilho">
+        {faixa.map((item) => (
+          <>
+            <span>{item}</span>
+            <svg viewBox="0 0 500 414.46"><path d={DINO_PATH} fill="currentColor"></path></svg>
+          </>
+        ))}
+      </div>
+    ))}
+  </div>
+
+  <!-- CATEGORIAS -->
+  <section class="section" aria-labelledby="t-categorias">
+    <div class="container">
+      <div class="section-head">
+        <h2 class="section-title" id="t-categorias">O que tem<br />na loja</h2>
+        <p class="section-lead">Do uniforme da turma ao adesivo do notebook. Toque numa categoria para ver as peças.</p>
+      </div>
+      <div class="grid-categorias">
+        {categorias.map((c, i) => <CategoryCard categoria={c} total={totalPorCategoria(c.slug)} indice={i} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- DESTAQUES -->
+  <section class="section section--surface" aria-labelledby="t-destaques">
+    <div class="container">
+      <div class="section-head">
+        <h2 class="section-title" id="t-destaques">Mais pedidos</h2>
+        <a href="/catalogo" class="link-arrow">Ver catálogo completo <Icon name="arrow-right" /></a>
+      </div>
+      <div class="grid-produtos">
+        {destaques.map((p, i) => <ProductCard produto={p} indice={i} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- COMO PEDIR -->
+  <section class="section" aria-labelledby="t-como">
+    <div class="container">
+      <div class="section-head">
+        <h2 class="section-title" id="t-como">Como pedir</h2>
+        <p class="section-lead">Sem carrinho, sem cadastro. O pedido é uma conversa no WhatsApp.</p>
+      </div>
+      <ol class="passos">
+        {passos.map((p, i) => (
+          <li class="passo" data-reveal style={`--i: ${i}`}>
+            <span class="passo__num display">0{i + 1}</span>
+            <h3 class="passo__titulo">{p.titulo}</h3>
+            <p>{p.texto}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- TURMAS -->
+  <section class="turmas" id="turmas" aria-labelledby="t-turmas">
+    <div class="container turmas__grid">
+      <div class="turmas__foto" data-reveal>
+        <Image src={fotoTurma} alt="Amigos abraçados de costas, vestindo camisetas" widths={[480, 720, 960]} sizes="(min-width: 900px) 45vw, 100vw" />
+      </div>
+      <div class="turmas__txt">
+        <p class="eyebrow">Pedidos coletivos</p>
+        <h2 class="section-title" id="t-turmas">Turmas, atléticas<br />e eventos</h2>
+        <p>
+          Camisetas de turma, uniformes de atlética, moletons de formatura e copos de festa com a arte da sua galera. A
+          nossa equipe cria a estampa com você, sem custo adicional.
+        </p>
+        <ul class="turmas__lista">
+          <li>A partir de 20 peças do mesmo modelo</li>
+          <li>Arte exclusiva criada pela Bixo</li>
+          <li>Cada pessoa da turma pode pagar separado</li>
+        </ul>
+        <div class="hero__ctas">
+          <a href={loja.pedidosColetivos} class="btn btn--lg btn--accent" target="_blank" rel="noopener noreferrer">
+            Solicitar orçamento <Icon name="arrow-up-right" />
+          </a>
+          <a
+            href={linkWhatsApp('Oi, Bixo Lab! Quero fazer um pedido coletivo para a minha turma/atlética.')}
+            class="btn btn--lg btn--ghost turmas__ghost"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Icon name="whatsapp" /> Tirar dúvidas
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOJA -->
+  <section class="section" id="loja" aria-labelledby="t-loja">
+    <div class="container loja__grid">
+      <div class="loja__txt">
+        <p class="eyebrow">A loja</p>
+        <h2 class="section-title" id="t-loja">Passa lá<br />no Lab</h2>
+        <p>
+          A Bixo existe desde {loja.desde} e já fez o merch de centenas de turmas. Agora tem loja física para você ver as
+          peças de perto, provar o tamanho e sair vestido de lenda.
+        </p>
+        <a href={loja.endereco.mapa} class="loja__endereco" target="_blank" rel="noopener noreferrer">
+          <Icon name="map-pin" />
+          <span><strong>{loja.endereco.linha}</strong><br />{loja.endereco.cidade}</span>
+          <Icon name="arrow-up-right" class="loja__seta" />
+        </a>
+      </div>
+      <div class="loja__foto" data-reveal>
+        <Image src={fotoLoja} alt="Interior de loja com roupas em araras e prateleiras" widths={[480, 720, 960]} sizes="(min-width: 900px) 50vw, 100vw" />
+      </div>
+    </div>
+  </section>
+
+  <!-- DÚVIDAS -->
+  <section class="section section--surface" id="duvidas" aria-labelledby="t-duvidas">
+    <div class="container duvidas__grid">
+      <h2 class="section-title" id="t-duvidas">Dúvidas</h2>
+      <div class="duvidas">
+        {duvidas.map((d) => (
+          <details class="duvida">
+            <summary>
+              {d.pergunta}
+              <Icon name="plus" />
+            </summary>
+            <p>{d.resposta}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* Hero */
+  .hero {
+    padding-block: clamp(var(--s-5), 4vw, var(--s-7)) var(--s-7);
+  }
+  .hero__grid {
+    display: grid;
+    gap: var(--s-6);
+    align-items: center;
+  }
+  @media (min-width: 960px) {
+    .hero__grid {
+      grid-template-columns: 1.1fr 1fr;
+      gap: var(--s-7);
+    }
+  }
+  .hero__titulo {
+    margin-top: var(--s-4);
+    font-size: clamp(3.5rem, 7.2vw, 7rem);
+  }
+  .hero__titulo span {
+    color: var(--green);
+  }
+  .hero__lead {
+    max-width: 32rem;
+    margin-top: var(--s-5);
+    font-size: 1.125rem;
+    color: var(--text-2);
+  }
+  .hero__ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+    margin-top: var(--s-6);
+  }
+  .hero__palco {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    max-height: min(70vh, 38rem);
+    width: 100%;
+    background:
+      radial-gradient(circle at 50% 42%, rgb(255 255 255 / 0.08), transparent 60%),
+      var(--green);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  .hero__selo {
+    position: absolute;
+    top: var(--s-4);
+    right: var(--s-4);
+    width: clamp(5.5rem, 12vw, 7.5rem);
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--gold);
+    pointer-events: none;
+  }
+  .hero__selo svg {
+    width: 100%;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    fill: var(--ink);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__selo svg {
+      animation: girar 18s linear infinite;
+    }
+  }
+  @keyframes girar {
+    to {
+      transform: rotate(1turn);
+    }
+  }
+
+  /* Faixa */
+  .faixa {
+    display: flex;
+    overflow: hidden;
+    background: var(--ink);
+    color: var(--gold);
+    border-block: 2px solid var(--ink);
+  }
+  .faixa__trilho {
+    display: flex;
+    align-items: center;
+    flex: none;
+    gap: var(--s-5);
+    padding: var(--s-3) var(--s-5) var(--s-3) 0;
+  }
+  .faixa__trilho span {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    text-transform: uppercase;
+    white-space: nowrap;
+    line-height: 1.2;
+  }
+  .faixa__trilho svg {
+    width: 2rem;
+    flex: none;
+    color: var(--paper);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .faixa__trilho {
+      animation: rolar 32s linear infinite;
+    }
+  }
+  @keyframes rolar {
+    to {
+      transform: translateX(-100%);
+    }
+  }
+
+  /* Seções */
+
+  .grid-categorias {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s-3);
+  }
+  @media (max-width: 767px) {
+    .grid-categorias > :global(:last-child:nth-child(odd)) {
+      grid-column: span 2;
+    }
+  }
+  @media (min-width: 768px) {
+    .grid-categorias {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--s-4);
+    }
+  }
+  @media (min-width: 1100px) {
+    .grid-categorias {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+  }
+
+  /* Como pedir */
+  .passos {
+    display: grid;
+    gap: var(--s-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  @media (min-width: 768px) {
+    .passos {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .passo {
+    padding: var(--s-5);
+    border-top: 2px solid var(--ink);
+  }
+  .passo__num {
+    font-size: 3.5rem;
+    color: var(--green);
+  }
+  .passo__titulo {
+    margin: var(--s-3) 0 var(--s-2);
+    font-family: var(--font-body);
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+  .passo p {
+    color: var(--text-2);
+  }
+
+  /* Turmas */
+  .turmas {
+    background: var(--green);
+    color: var(--paper);
+    padding-block: clamp(var(--s-8), 10vw, 8rem);
+  }
+  .turmas .eyebrow {
+    color: var(--gold);
+  }
+  .turmas__grid,
+  .loja__grid {
+    display: grid;
+    gap: var(--s-7);
+    align-items: center;
+  }
+  @media (min-width: 900px) {
+    .turmas__grid {
+      grid-template-columns: 0.9fr 1fr;
+    }
+    .loja__grid {
+      grid-template-columns: 1fr 1.1fr;
+    }
+  }
+  .turmas__foto,
+  .loja__foto {
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+  }
+  .turmas__foto :global(img),
+  .loja__foto :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .turmas__foto {
+    aspect-ratio: 4 / 5;
+  }
+  .loja__foto {
+    aspect-ratio: 5 / 4;
+  }
+  .turmas__txt > p,
+  .loja__txt > p {
+    max-width: 34rem;
+    margin-top: var(--s-5);
+    font-size: 1.0625rem;
+  }
+  .turmas__txt .section-title,
+  .loja__txt .section-title {
+    margin-top: var(--s-3);
+  }
+  .turmas__lista {
+    margin: var(--s-5) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .turmas__lista li {
+    display: flex;
+    gap: var(--s-3);
+    padding-block: var(--s-3);
+    border-bottom: 1px solid rgb(245 242 234 / 0.2);
+    font-weight: 500;
+  }
+  .turmas__lista li::before {
+    content: '';
+    flex: none;
+    width: 0.6rem;
+    height: 0.6rem;
+    margin-top: 0.5rem;
+    border-radius: 50%;
+    background: var(--gold);
+  }
+  .turmas .turmas__ghost {
+    color: var(--paper);
+    border-color: var(--paper);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .turmas .turmas__ghost:hover {
+      background: var(--paper);
+      border-color: var(--paper);
+      color: var(--green);
+    }
+  }
+
+  /* Loja */
+  .loja__endereco {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-4);
+    margin-top: var(--s-6);
+    padding: var(--s-4) var(--s-5);
+    border: 2px solid var(--ink);
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    transition: background-color 200ms ease;
+  }
+  .loja__endereco :global(svg) {
+    width: 1.5rem;
+    height: 1.5rem;
+    flex: none;
+    color: var(--green);
+  }
+  .loja__endereco :global(.loja__seta) {
+    color: var(--ink);
+    transition: transform 250ms var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .loja__endereco:hover {
+      background: var(--gold);
+    }
+    .loja__endereco:hover :global(.loja__seta) {
+      transform: translate(2px, -2px);
+    }
+  }
+
+  /* Dúvidas */
+  .duvidas__grid {
+    display: grid;
+    gap: var(--s-6);
+  }
+  @media (min-width: 900px) {
+    .duvidas__grid {
+      grid-template-columns: 1fr 2fr;
+    }
+  }
+  .duvida {
+    border-bottom: 2px solid var(--ink);
+  }
+  .duvida:first-child {
+    border-top: 2px solid var(--ink);
+  }
+  .duvida summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-4);
+    min-height: 3.5rem;
+    padding-block: var(--s-4);
+    font-size: 1.125rem;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+  }
+  .duvida summary::-webkit-details-marker {
+    display: none;
+  }
+  .duvida summary :global(svg) {
+    width: 1.5rem;
+    height: 1.5rem;
+    flex: none;
+    transition: transform 200ms var(--ease-out);
+  }
+  .duvida[open] summary :global(svg) {
+    transform: rotate(45deg);
+  }
+  .duvida p {
+    max-width: 44rem;
+    padding-bottom: var(--s-5);
+    color: var(--text-2);
+  }
+</style>

@@ -1,0 +1,411 @@
+---
+import { Image, getImage } from 'astro:assets';
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import ProductMockup from '../../components/ProductMockup.astro';
+import { categoriaPorSlug, loja } from '../../data/loja';
+import { listarProdutos, formatarPreco, type Produto } from '../../lib/produtos';
+import { linkWhatsApp, mensagemPedido } from '../../lib/whatsapp';
+
+export async function getStaticPaths() {
+  const produtos = await listarProdutos();
+  return produtos.map((produto) => ({ params: { slug: produto.id }, props: { produto } }));
+}
+
+const { produto } = Astro.props as { produto: Produto };
+const { nome, categoria, modelo, resumo, preco, cores, tamanhos, estampa, fotos, detalhes, disponivel } = produto.data;
+const { Content } = await render(produto);
+
+const cat = categoriaPorSlug(categoria);
+const url = new URL(`/produto/${produto.id}`, Astro.site).toString();
+const escolheTamanho = !(tamanhos.length === 1 && tamanhos[0] === 'Único');
+const hrefInicial = linkWhatsApp(mensagemPedido({ nome, url }));
+
+const relacionados = (await listarProdutos())
+  .filter((p) => p.id !== produto.id)
+  .sort((a, b) => Number(b.data.categoria === categoria) - Number(a.data.categoria === categoria))
+  .slice(0, 4);
+
+const og = fotos[0] ? (await getImage({ src: fotos[0], width: 1200, format: 'jpg' })).src : undefined;
+---
+
+<Base titulo={nome} descricao={resumo} imagem={og}>
+  <section class="produto">
+    <div class="container">
+      <nav class="migalhas" aria-label="Você está em">
+        <a href="/">Início</a>
+        <span aria-hidden="true">/</span>
+        <a href="/catalogo">Catálogo</a>
+        <span aria-hidden="true">/</span>
+        <a href={`/catalogo/${categoria}`}>{cat?.nome}</a>
+      </nav>
+
+      <div class="produto__grid">
+        <div class="produto__midia">
+          {fotos.length ? (
+            <div class="fotos">
+              {fotos.map((foto, i) => (
+                <div class="fotos__item">
+                  <Image
+                    src={foto}
+                    alt={`${nome}, foto ${i + 1}`}
+                    widths={[480, 800, 1200]}
+                    sizes="(min-width: 960px) 55vw, 100vw"
+                    loading={i === 0 ? 'eager' : 'lazy'}
+                  />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div class="mockups" data-mockups>
+              {cores.map((c, i) => (
+                <div class="mockups__item" data-cor={i} aria-hidden={i === 0 ? undefined : 'true'} data-ativo={i === 0 ? '' : undefined}>
+                  <ProductMockup modelo={modelo} cor={c.hex} estampa={estampa} label={`${nome} na cor ${c.nome}`} />
+                </div>
+              ))}
+              <p class="mockups__nota">Ilustração. Fotos reais em breve.</p>
+            </div>
+          )}
+        </div>
+
+        <div class="produto__info">
+          <p class="eyebrow">{cat?.nome}</p>
+          <h1 class="produto__nome display">{nome}</h1>
+          {preco && <p class="produto__preco">{formatarPreco(preco)}</p>}
+          <p class="produto__resumo">{resumo}</p>
+
+          <form class="opcoes" data-pedido data-nome={nome} data-url={url} data-whats={loja.whatsapp.numero}>
+            <fieldset>
+              <legend>Cor: <strong data-cor-nome>{cores[0].nome}</strong></legend>
+              <div class="opcoes__cores">
+                {cores.map((c, i) => (
+                  <label class="cor" style={`--c: ${c.hex}`}>
+                    <input type="radio" name="cor" value={c.nome} data-indice={i} checked={i === 0} />
+                    <span class="cor__bolinha"></span>
+                    <span class="visually-hidden">{c.nome}</span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+
+            {escolheTamanho && (
+              <fieldset>
+                <legend>Tamanho</legend>
+                <div class="opcoes__tamanhos">
+                  {tamanhos.map((t) => (
+                    <label class="tam">
+                      <input type="radio" name="tamanho" value={t} />
+                      <span>{t}</span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+            )}
+
+            {disponivel ? (
+              <a href={hrefInicial} class="btn btn--brand btn--lg btn--block" target="_blank" rel="noopener noreferrer" data-botao>
+                <Icon name="whatsapp" /> Pedir no WhatsApp
+              </a>
+            ) : (
+              <a
+                href={linkWhatsApp(`Oi, Bixo Lab! A peça *${nome}* vai voltar? ${url}`)}
+                class="btn btn--ghost btn--lg btn--block"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Esgotado · Avise-me quando voltar
+              </a>
+            )}
+            <p class="opcoes__ajuda" data-ajuda>
+              {escolheTamanho ? 'Escolha o tamanho para ele ir junto na mensagem.' : 'A mensagem já vai com a peça e a cor escolhidas.'}
+            </p>
+          </form>
+
+          <div class="produto__texto">
+            <Content />
+            {detalhes.length > 0 && (
+              <ul class="detalhes">
+                {detalhes.map((d) => <li>{d}</li>)}
+              </ul>
+            )}
+          </div>
+
+          <a href={loja.endereco.mapa} class="retirada" target="_blank" rel="noopener noreferrer">
+            <Icon name="map-pin" />
+            <span>Quer ver de perto? Passa na loja: {loja.endereco.linha}, {loja.endereco.cidade}</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {relacionados.length > 0 && (
+    <section class="section section--surface" aria-labelledby="t-rel">
+      <div class="container">
+        <div class="section-head">
+          <h2 class="section-title" id="t-rel">Combina com</h2>
+          <a href="/catalogo" class="link-arrow">Ver catálogo <Icon name="arrow-right" /></a>
+        </div>
+        <div class="grid-produtos">
+          {relacionados.map((p, i) => <ProductCard produto={p} indice={i} />)}
+        </div>
+      </div>
+    </section>
+  )}
+</Base>
+
+<style>
+  .produto {
+    padding-block: var(--s-6) clamp(var(--s-8), 8vw, 7rem);
+  }
+  .migalhas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+    font-size: 0.875rem;
+    color: var(--text-muted);
+  }
+  .migalhas a {
+    text-decoration: none;
+  }
+  .migalhas a:hover {
+    text-decoration: underline;
+  }
+
+  .produto__grid {
+    display: grid;
+    gap: var(--s-6);
+    margin-top: var(--s-5);
+    align-items: start;
+  }
+  @media (min-width: 960px) {
+    .produto__grid {
+      grid-template-columns: 1.15fr 1fr;
+      gap: var(--s-8);
+    }
+    .produto__midia {
+      position: sticky;
+      top: calc(var(--header-h) + var(--s-5));
+    }
+  }
+
+  .mockups {
+    position: relative;
+    display: grid;
+    aspect-ratio: 1;
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+  }
+  .mockups__item {
+    grid-area: 1 / 1;
+    display: grid;
+    place-items: center;
+    opacity: 0;
+    transform: scale(0.97);
+    transition:
+      opacity 250ms var(--ease-out),
+      transform 250ms var(--ease-out);
+  }
+  .mockups__item :global(svg) {
+    width: 78%;
+  }
+  .mockups__item[data-ativo] {
+    opacity: 1;
+    transform: none;
+  }
+  .mockups__nota {
+    position: absolute;
+    left: var(--s-4);
+    bottom: var(--s-3);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .fotos {
+    display: grid;
+    gap: var(--s-3);
+  }
+  .fotos__item {
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+  }
+  .fotos__item :global(img) {
+    width: 100%;
+    height: auto;
+  }
+
+  .produto__nome {
+    margin-top: var(--s-2);
+    font-size: clamp(2.75rem, 6vw, 4.75rem);
+  }
+  .produto__preco {
+    margin-top: var(--s-3);
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .produto__resumo {
+    margin-top: var(--s-4);
+    font-size: 1.125rem;
+    color: var(--text-2);
+  }
+
+  .opcoes {
+    display: grid;
+    gap: var(--s-5);
+    margin-top: var(--s-6);
+    padding-top: var(--s-5);
+    border-top: 2px solid var(--ink);
+  }
+  fieldset {
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  legend {
+    margin-bottom: var(--s-3);
+    font-weight: 500;
+  }
+  .opcoes__cores,
+  .opcoes__tamanhos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+  }
+  .cor,
+  .tam {
+    position: relative;
+    cursor: pointer;
+  }
+  .cor input,
+  .tam input {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    margin: 0;
+    cursor: pointer;
+  }
+  .cor__bolinha {
+    display: block;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    background: var(--c);
+    box-shadow:
+      inset 0 0 0 1px rgb(20 22 19 / 0.25),
+      0 0 0 3px var(--bg),
+      0 0 0 3px transparent;
+    transition: box-shadow 160ms var(--ease-out);
+  }
+  .cor input:checked + .cor__bolinha {
+    box-shadow:
+      inset 0 0 0 1px rgb(20 22 19 / 0.25),
+      0 0 0 3px var(--bg),
+      0 0 0 5px var(--ink);
+  }
+  .cor input:focus-visible + .cor__bolinha,
+  .tam input:focus-visible + span {
+    outline: 3px solid var(--ring);
+    outline-offset: 5px;
+  }
+  .tam span {
+    display: grid;
+    place-items: center;
+    min-width: 3.25rem;
+    height: 3rem;
+    padding: 0 var(--s-3);
+    border: 2px solid var(--line-strong);
+    border-radius: var(--radius);
+    font-weight: 600;
+    transition:
+      background-color 160ms ease,
+      color 160ms ease;
+  }
+  .tam input:checked + span {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--paper);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .tam input:not(:checked):hover + span {
+      background: var(--surface);
+    }
+  }
+  .opcoes__ajuda {
+    margin-top: calc(var(--s-3) * -1);
+    font-size: 0.875rem;
+    color: var(--text-muted);
+  }
+
+  .produto__texto {
+    margin-top: var(--s-6);
+    color: var(--text-2);
+  }
+  .produto__texto :global(p + p) {
+    margin-top: var(--s-3);
+  }
+  .detalhes {
+    margin: var(--s-4) 0 0;
+    padding-left: 1.2rem;
+  }
+  .retirada {
+    display: flex;
+    gap: var(--s-3);
+    margin-top: var(--s-6);
+    padding: var(--s-4);
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    font-size: 0.9375rem;
+    text-decoration: none;
+  }
+  .retirada :global(svg) {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex: none;
+    margin-top: 0.1rem;
+    color: var(--green);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .retirada:hover span {
+      text-decoration: underline;
+    }
+  }
+</style>
+
+<script>
+  import { mensagemPedido } from '../../lib/whatsapp';
+
+  const form = document.querySelector<HTMLFormElement>('[data-pedido]');
+  if (form) {
+    const { nome = '', url = '', whats = '' } = form.dataset;
+    const botao = form.querySelector<HTMLAnchorElement>('[data-botao]');
+    const nomeCor = form.querySelector<HTMLElement>('[data-cor-nome]');
+    const ajuda = form.querySelector<HTMLElement>('[data-ajuda]');
+    const mockups = document.querySelectorAll<HTMLElement>('[data-mockups] [data-cor]');
+
+    const atualizar = () => {
+      const dados = new FormData(form);
+      const cor = String(dados.get('cor') ?? '');
+      const tamanho = dados.get('tamanho') ? String(dados.get('tamanho')) : undefined;
+      if (nomeCor) nomeCor.textContent = cor;
+      if (botao) {
+        botao.href = `https://wa.me/${whats}?text=${encodeURIComponent(mensagemPedido({ nome, cor, tamanho, url }))}`;
+      }
+      if (ajuda && tamanho) ajuda.textContent = `A mensagem vai com: ${nome}, ${cor}, tamanho ${tamanho}.`;
+
+      const indice = form.querySelector<HTMLInputElement>('input[name="cor"]:checked')?.dataset.indice;
+      mockups.forEach((m) => {
+        const ativo = m.dataset.cor === indice;
+        m.toggleAttribute('data-ativo', ativo);
+        m.toggleAttribute('aria-hidden', !ativo);
+      });
+    };
+
+    form.addEventListener('change', atualizar);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    atualizar();
+  }
+</script>

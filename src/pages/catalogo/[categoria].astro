@@ -1,0 +1,18 @@
+---
+import Base from '../../layouts/Base.astro';
+import Catalogo from '../../components/Catalogo.astro';
+import { categorias, type Categoria } from '../../data/loja';
+import { listarProdutos } from '../../lib/produtos';
+
+export function getStaticPaths() {
+  return categorias.map((categoria) => ({ params: { categoria: categoria.slug }, props: { categoria } }));
+}
+
+const { categoria } = Astro.props as { categoria: Categoria };
+const todos = await listarProdutos();
+const produtos = todos.filter((p) => p.data.categoria === categoria.slug);
+---
+
+<Base titulo={categoria.nome} descricao={`${categoria.descricao} Peça pelo WhatsApp.`}>
+  <Catalogo produtos={produtos} todos={todos} atual={categoria} />
+</Base>
