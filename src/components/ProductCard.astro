@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import ProductMockup from './ProductMockup.astro';
-import { categoriaPorSlug } from '../data/loja';
+import { colecaoPorSlug, nomeModelo } from '../data/loja';
 import { formatarPreco, type Produto } from '../lib/produtos';
 
 interface Props {
@@ -10,7 +10,7 @@ interface Props {
 }
 
 const { produto, indice = 0 } = Astro.props;
-const { nome, categoria, modelo, cores, estampa, fotos, preco, novidade, disponivel } = produto.data;
+const { nome, curso, modelo, cores, estampa, subestampa, fotos, preco, novidade, disponivel } = produto.data;
 const capa = fotos[0];
 ---
 
@@ -20,14 +20,14 @@ const capa = fotos[0];
       {capa ? (
         <Image src={capa} alt="" widths={[320, 480, 640]} sizes="(min-width: 1100px) 25vw, (min-width: 768px) 33vw, 50vw" />
       ) : (
-        <ProductMockup modelo={modelo} cor={cores[0].hex} estampa={estampa} class="card__mockup" />
+        <ProductMockup modelo={modelo} cor={cores[0].hex} estampa={estampa} subestampa={subestampa} class="card__mockup" />
       )}
       {!disponivel ? <span class="selo selo--off">Esgotado</span> : novidade && <span class="selo">Novidade</span>}
     </div>
     <div class="card__info">
       <h3 class="card__nome">{nome}</h3>
       <p class="card__meta">
-        {categoriaPorSlug(categoria)?.nome}
+        <span>{nomeModelo[modelo]} · {colecaoPorSlug(curso)?.nome}</span>
         {preco && <span class="card__preco">{formatarPreco(preco)}</span>}
       </p>
       <ul class="card__cores" aria-label={`${cores.length} ${cores.length > 1 ? 'cores' : 'cor'}: ${cores.map((c) => c.nome).join(', ')}`}>

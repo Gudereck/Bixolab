@@ -4,9 +4,9 @@ import Base from '../layouts/Base.astro';
 import Dino3D from '../components/Dino3D.astro';
 import Icon from '../components/Icon.astro';
 import ProductCard from '../components/ProductCard.astro';
-import CategoryCard from '../components/CategoryCard.astro';
+import CursoCard from '../components/CursoCard.astro';
 import { DINO_PATH } from '../components/DinoPath';
-import { loja, categorias } from '../data/loja';
+import { loja, cursos, colecaoBixo } from '../data/loja';
 import { listarProdutos } from '../lib/produtos';
 import { linkWhatsApp } from '../lib/whatsapp';
 import fotoTurma from '../assets/fotos/hero-shirt.jpg';
@@ -14,9 +14,10 @@ import fotoLoja from '../assets/fotos/lab-store.jpg';
 
 const produtos = await listarProdutos();
 const destaques = produtos.filter((p) => p.data.destaque).slice(0, 8);
-const totalPorCategoria = (slug: string) => produtos.filter((p) => p.data.categoria === slug).length;
+const colecao = produtos.filter((p) => p.data.curso === colecaoBixo.slug && !p.data.destaque).slice(0, 4);
+const totalPorCurso = (slug: string) => produtos.filter((p) => p.data.curso === slug).length;
 
-const faixa = ['Camisetas', 'Moletons', 'Bonés', 'Canecas', 'Copos', 'Ecobags', 'Adesivos', 'Turmas', 'Atléticas'];
+const faixa = [...cursos.map((c) => c.nome), 'Atléticas', 'Calouradas', 'Formaturas'];
 
 const passos = [
   { titulo: 'Escolha a peça', texto: 'Navegue pelo catálogo e veja cores, tamanhos e detalhes de cada produto.' },
@@ -57,12 +58,12 @@ const duvidas = [
   <section class="hero">
     <div class="container hero__grid">
       <div class="hero__txt">
-        <p class="eyebrow">Merch universitário · desde {loja.desde}</p>
+        <p class="eyebrow">Camisetas de turma · desde {loja.desde}</p>
         <h1 class="hero__titulo display">
           Bixo hoje,<br /><span>lenda</span><br />amanhã.
         </h1>
         <p class="hero__lead">
-          Camisetas, moletons, bonés, canecas e acessórios para a fase mais legal da sua vida. Escolha a peça e peça direto pelo WhatsApp.
+          Camisetas e moletons de turma para Direito, Medicina, Engenharia e todos os cursos da sua faculdade. Veja as peças e peça direto pelo WhatsApp.
         </p>
         <div class="hero__ctas">
           <a href="/catalogo" class="btn btn--lg">Ver catálogo <Icon name="arrow-right" /></a>
@@ -98,15 +99,18 @@ const duvidas = [
     ))}
   </div>
 
-  <!-- CATEGORIAS -->
-  <section class="section" aria-labelledby="t-categorias">
+  <!-- CURSOS -->
+  <section class="section" id="cursos" aria-labelledby="t-cursos">
     <div class="container">
       <div class="section-head">
-        <h2 class="section-title" id="t-categorias">O que tem<br />na loja</h2>
-        <p class="section-lead">Do uniforme da turma ao adesivo do notebook. Toque numa categoria para ver as peças.</p>
+        <h2 class="section-title" id="t-cursos">Escolha<br />seu curso</h2>
+        <p class="section-lead">
+          Toque no seu curso para ver as camisetas e moletons de turma. Não achou o seu?{' '}
+          <a href={linkWhatsApp('Oi, Bixo Lab! Quero uma camiseta de turma para o meu curso.')} target="_blank" rel="noopener noreferrer">A gente cria a da sua turma.</a>
+        </p>
       </div>
-      <div class="grid-categorias">
-        {categorias.map((c, i) => <CategoryCard categoria={c} total={totalPorCategoria(c.slug)} indice={i} />)}
+      <div class="grid-cursos">
+        {cursos.map((c, i) => <CursoCard curso={c} total={totalPorCurso(c.slug)} indice={i} />)}
       </div>
     </div>
   </section>
@@ -124,8 +128,26 @@ const duvidas = [
     </div>
   </section>
 
+  <!-- COLEÇÃO BIXO -->
+  {colecao.length > 0 && (
+    <section class="section" aria-labelledby="t-colecao">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title" id="t-colecao">Além da<br />camiseta</h2>
+            <p class="section-lead colecao__lead">{colecaoBixo.descricao}</p>
+          </div>
+          <a href={`/catalogo/${colecaoBixo.slug}`} class="link-arrow">Ver a Coleção Bixo <Icon name="arrow-right" /></a>
+        </div>
+        <div class="grid-produtos">
+          {colecao.map((p, i) => <ProductCard produto={p} indice={i} />)}
+        </div>
+      </div>
+    </section>
+  )}
+
   <!-- COMO PEDIR -->
-  <section class="section" aria-labelledby="t-como">
+  <section class="section section--surface" aria-labelledby="t-como">
     <div class="container">
       <div class="section-head">
         <h2 class="section-title" id="t-como">Como pedir</h2>
@@ -336,26 +358,25 @@ const duvidas = [
 
   /* Seções */
 
-  .grid-categorias {
+  .grid-cursos {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--s-3);
   }
-  @media (max-width: 767px) {
-    .grid-categorias > :global(:last-child:nth-child(odd)) {
-      grid-column: span 2;
-    }
-  }
   @media (min-width: 768px) {
-    .grid-categorias {
+    .grid-cursos {
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: var(--s-4);
     }
   }
-  @media (min-width: 1100px) {
-    .grid-categorias {
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-    }
+  .section-lead a {
+    color: var(--text);
+    font-weight: 600;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.2em;
+  }
+  .colecao__lead {
+    margin-top: var(--s-4);
   }
 
   /* Como pedir */

@@ -9,11 +9,13 @@ interface Props {
   modelo: Modelo;
   cor: string;
   estampa?: string;
+  /** Linha menor abaixo da estampa, ex.: "TURMA 2026". */
+  subestampa?: string;
   label?: string;
   class?: string;
 }
 
-const { modelo, cor, estampa = 'BIXO', label, class: className } = Astro.props;
+const { modelo, cor, estampa = 'BIXO', subestampa, label, class: className } = Astro.props;
 
 const INK = '#141613';
 const sombra = ajustar(cor, 0.8);
@@ -36,6 +38,10 @@ const area = areas[modelo];
 const eDino = estampa.toLowerCase() === 'dino';
 // Anton tem ~0.46em de largura média por caractere em caixa alta.
 const tamanhoFonte = Math.min(area.w * 0.62, area.w / (Math.max(estampa.length, 1) * 0.46));
+const tamanhoSub = subestampa ? Math.min(tamanhoFonte * 0.36, area.w / (subestampa.length * 0.62)) : 0;
+// Com subestampa, sobe a linha principal para o bloco ficar centralizado.
+const yEstampa = area.y - (subestampa ? tamanhoSub * 0.75 : 0);
+const ySub = yEstampa + tamanhoFonte * 0.52 + tamanhoSub * 0.75;
 const dinoW = area.w * 0.9;
 const dinoH = dinoW * (414.46 / 500);
 
@@ -157,17 +163,11 @@ const stroke = { stroke: INK, 'stroke-width': 3, 'stroke-linejoin': 'round' } as
       <path d={DINO_PATH} fill={tinta} />
     </svg>
   ) : (
-    <text
-      x={area.x}
-      y={area.y}
-      text-anchor="middle"
-      dominant-baseline="central"
-      font-family="Anton, Impact, sans-serif"
-      font-size={tamanhoFonte.toFixed(1)}
-      letter-spacing="1"
-      fill={tinta}
-    >
-      {estampa}
-    </text>
+    <g fill={tinta} font-family="Anton, Impact, sans-serif" text-anchor="middle" dominant-baseline="central">
+      <text x={area.x} y={yEstampa} font-size={tamanhoFonte.toFixed(1)} letter-spacing="1">{estampa}</text>
+      {subestampa && (
+        <text x={area.x} y={ySub} font-size={tamanhoSub.toFixed(1)} letter-spacing="2">{subestampa}</text>
+      )}
+    </g>
   ))}
 </svg>

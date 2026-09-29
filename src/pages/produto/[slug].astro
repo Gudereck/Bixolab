@@ -5,7 +5,7 @@ import Base from '../../layouts/Base.astro';
 import Icon from '../../components/Icon.astro';
 import ProductCard from '../../components/ProductCard.astro';
 import ProductMockup from '../../components/ProductMockup.astro';
-import { categoriaPorSlug, loja } from '../../data/loja';
+import { colecaoPorSlug, loja, nomeModelo } from '../../data/loja';
 import { listarProdutos, formatarPreco, type Produto } from '../../lib/produtos';
 import { linkWhatsApp, mensagemPedido } from '../../lib/whatsapp';
 
@@ -15,17 +15,17 @@ export async function getStaticPaths() {
 }
 
 const { produto } = Astro.props as { produto: Produto };
-const { nome, categoria, modelo, resumo, preco, cores, tamanhos, estampa, fotos, detalhes, disponivel } = produto.data;
+const { nome, curso, modelo, resumo, preco, cores, tamanhos, estampa, subestampa, fotos, detalhes, disponivel } = produto.data;
 const { Content } = await render(produto);
 
-const cat = categoriaPorSlug(categoria);
+const colecao = colecaoPorSlug(curso);
 const url = new URL(`/produto/${produto.id}`, Astro.site).toString();
 const escolheTamanho = !(tamanhos.length === 1 && tamanhos[0] === 'Único');
 const hrefInicial = linkWhatsApp(mensagemPedido({ nome, url }));
 
 const relacionados = (await listarProdutos())
   .filter((p) => p.id !== produto.id)
-  .sort((a, b) => Number(b.data.categoria === categoria) - Number(a.data.categoria === categoria))
+  .sort((a, b) => Number(b.data.curso === curso) - Number(a.data.curso === curso))
   .slice(0, 4);
 
 const og = fotos[0] ? (await getImage({ src: fotos[0], width: 1200, format: 'jpg' })).src : undefined;
@@ -39,7 +39,7 @@ const og = fotos[0] ? (await getImage({ src: fotos[0], width: 1200, format: 'jpg
         <span aria-hidden="true">/</span>
         <a href="/catalogo">Catálogo</a>
         <span aria-hidden="true">/</span>
-        <a href={`/catalogo/${categoria}`}>{cat?.nome}</a>
+        <a href={`/catalogo/${curso}`}>{colecao?.nome}</a>
       </nav>
 
       <div class="produto__grid">
@@ -62,7 +62,7 @@ const og = fotos[0] ? (await getImage({ src: fotos[0], width: 1200, format: 'jpg
             <div class="mockups" data-mockups>
               {cores.map((c, i) => (
                 <div class="mockups__item" data-cor={i} aria-hidden={i === 0 ? undefined : 'true'} data-ativo={i === 0 ? '' : undefined}>
-                  <ProductMockup modelo={modelo} cor={c.hex} estampa={estampa} label={`${nome} na cor ${c.nome}`} />
+                  <ProductMockup modelo={modelo} cor={c.hex} estampa={estampa} subestampa={subestampa} label={`${nome} na cor ${c.nome}`} />
                 </div>
               ))}
               <p class="mockups__nota">Ilustração. Fotos reais em breve.</p>
@@ -71,7 +71,7 @@ const og = fotos[0] ? (await getImage({ src: fotos[0], width: 1200, format: 'jpg
         </div>
 
         <div class="produto__info">
-          <p class="eyebrow">{cat?.nome}</p>
+          <p class="eyebrow">{nomeModelo[modelo]} · {colecao?.nome}</p>
           <h1 class="produto__nome display">{nome}</h1>
           {preco && <p class="produto__preco">{formatarPreco(preco)}</p>}
           <p class="produto__resumo">{resumo}</p>

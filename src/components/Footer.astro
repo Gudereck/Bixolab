@@ -1,7 +1,7 @@
 ---
 import Logo from './Logo.astro';
 import Icon from './Icon.astro';
-import { loja, categorias } from '../data/loja';
+import { loja, colecoes } from '../data/loja';
 import { linkWhatsApp } from '../lib/whatsapp';
 const ano = new Date().getFullYear();
 ---
@@ -13,14 +13,14 @@ const ano = new Date().getFullYear();
     <div class="footer__grid">
       <div class="footer__marca">
         <Logo />
-        <p>Merch universitário desde {loja.desde}. Camisetas, moletons, bonés, canecas e acessórios.</p>
+        <p>Camisetas de turma desde {loja.desde}. Direito, Medicina, Engenharia e todos os cursos da sua faculdade.</p>
       </div>
 
-      <nav aria-label="Categorias">
+      <nav aria-label="Cursos">
         <h2 class="footer__titulo">Catálogo</h2>
         <ul>
           <li><a href="/catalogo">Todas as peças</a></li>
-          {categorias.map((c) => <li><a href={`/catalogo/${c.slug}`}>{c.nome}</a></li>)}
+          {colecoes.map((c) => <li><a href={`/catalogo/${c.slug}`}>{c.nome}</a></li>)}
         </ul>
       </nav>
 

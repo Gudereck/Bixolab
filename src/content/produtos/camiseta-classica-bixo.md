@@ -1,6 +1,6 @@
 ---
 nome: Camiseta Clássica Bixo
-categoria: camisetas
+curso: colecao-bixo
 modelo: camiseta
 resumo: A camiseta que começou tudo. Estampa BIXO no peito, corte reto e as cores da casa.
 cores:
@@ -9,7 +9,6 @@ cores:
   - { nome: Grafite Lenda, hex: '#2e3430' }
 tamanhos: [P, M, G, GG, XG]
 estampa: BIXO
-destaque: true
-ordem: 1
+ordem: 50
 ---
 A peça mais pedida da loja. Vai bem na calourada, na aula e na foto de formatura.

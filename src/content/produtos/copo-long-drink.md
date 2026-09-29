@@ -1,6 +1,6 @@
 ---
 nome: Copo Long Drink
-categoria: canecas-e-copos
+curso: colecao-bixo
 modelo: copo
 resumo: O copo da festa da turma. Dá para personalizar com o nome do curso.
 cores:
@@ -9,7 +9,6 @@ cores:
   - { nome: Âmbar, hex: '#e0a43a' }
 estampa: LENDA
 novidade: true
-destaque: true
-ordem: 10
+ordem: 54
 ---
 Leve para a festa, traga de lembrança. Pedidos em quantidade para eventos pelo WhatsApp.

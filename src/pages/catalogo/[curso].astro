@@ -1,0 +1,19 @@
+---
+import Base from '../../layouts/Base.astro';
+import Catalogo from '../../components/Catalogo.astro';
+import { colecoes, type Curso } from '../../data/loja';
+import { listarProdutos } from '../../lib/produtos';
+
+export function getStaticPaths() {
+  return colecoes.map((curso) => ({ params: { curso: curso.slug }, props: { curso } }));
+}
+
+const { curso } = Astro.props as { curso: Curso };
+const todos = await listarProdutos();
+const produtos = todos.filter((p) => p.data.curso === curso.slug);
+const titulo = curso.slug === 'colecao-bixo' ? curso.nome : `Camisetas de turma de ${curso.nome}`;
+---
+
+<Base titulo={titulo} descricao={`${curso.descricao} Peça pelo WhatsApp.`}>
+  <Catalogo produtos={produtos} todos={todos} atual={curso} />
+</Base>
