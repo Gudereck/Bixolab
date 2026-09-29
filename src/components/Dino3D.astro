@@ -1,5 +1,5 @@
 ---
-// Dino da marca em 3D (Three.js). O SVG 2D aparece até o WebGL carregar
+// Tricerátops em 3D (Three.js). O dino 2D da marca aparece até o WebGL carregar
 // e continua como fallback se o navegador não tiver WebGL.
 import { DINO_PATH } from './DinoPath';
 
@@ -14,7 +14,7 @@ const { class: className } = Astro.props;
     <path d={DINO_PATH} fill="var(--gold)" stroke="var(--ink)" stroke-width="14" stroke-linejoin="round"></path>
   </svg>
   <button class="dino3d__stage" type="button" aria-label="Fazer o dino pular" hidden></button>
-  <p class="dino3d__hint" aria-hidden="true">Toque no dino</p>
+  <p class="dino3d__hint" aria-hidden="true">Toque no tricerátops</p>
 </div>
 
 <style>

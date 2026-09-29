@@ -1,7 +1,7 @@
 # Bixo Lab — catálogo
 
 Site-vitrine da Bixo Lab, loja de camisetas de turma: as pessoas escolhem o curso, veem as peças e fazem o pedido pelo WhatsApp.
-Feito com [Astro](https://astro.build) (site estático), CSS puro e [Three.js](https://threejs.org) no dino 3D da home.
+Feito com [Astro](https://astro.build) (site estático), CSS puro e [Three.js](https://threejs.org) no tricerátops 3D da home.
 
 ## Rodando
 
@@ -61,7 +61,7 @@ src/
   content/produtos/   peças (Markdown)
   data/loja.ts        dados da loja e cursos
   components/         Header, Footer, cards, ilustrações (ProductMockup), Dino3D
-  scripts/dino-cena.ts  cena Three.js do dino (carregada sob demanda)
+  scripts/dino-cena.ts  cena Three.js do tricerátops (carregada sob demanda)
   pages/              rotas
   styles/global.css   tokens de cor, tipografia e utilitários
 ```
