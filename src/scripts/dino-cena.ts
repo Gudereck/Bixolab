@@ -1,17 +1,15 @@
-// Cena 3D do tricerátops (Three.js). Carregada sob demanda pelo componente Dino3D.
-// Corpo, rabo, patas e chifres são "tubos" de espessura variável ao longo de
-// curvas, o que dá a silhueta de um tricerátops de verdade: quadril alto,
-// rabo grosso afinando, patas robustas, cabeça grande com gola e chifres longos.
+// Cena 3D da pata de dinossauro (Three.js). Carregada sob demanda pelo componente Dino3D.
+// Perna, dedos e garras são "tubos" de espessura variável ao longo de curvas.
+// Parada, a pata mexe os dedos e inclina seguindo o ponteiro; no toque, dá uma pisada.
 import * as THREE from 'three';
 
 const CORES = {
-  corpo: '#a8834a',
-  gola: '#c9a063',
-  borda: '#e8dcc0',
-  chifre: '#efe6cf',
-  bico: '#3a3128',
-  olho: '#141613',
+  pele: '#a8834a',
+  sola: '#8a6a3a',
+  escama: '#bf9a5c',
+  garra: '#2f2a24',
   contorno: '#141613',
+  poeira: '#e8dcc0',
 };
 
 type Perfil = [number, number][];
@@ -93,13 +91,15 @@ export function iniciarDino(root: HTMLElement, stage: HTMLButtonElement) {
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
-  camera.position.set(0, 1.4, 14);
-  camera.lookAt(0, 0.1, 0);
+  const ALVO_CAMERA = new THREE.Vector3(0.5, 0.9, 0);
+  const CAMERA_Y = 5.2;
+  camera.position.set(0, CAMERA_Y, 15);
+  camera.lookAt(ALVO_CAMERA);
 
   const materiais = new Map<string, THREE.Material>();
   const mat = (cor: string) => {
     if (!materiais.has(cor)) {
-      materiais.set(cor, new THREE.MeshStandardMaterial({ color: cor, roughness: 0.78, metalness: 0 }));
+      materiais.set(cor, new THREE.MeshStandardMaterial({ color: cor, roughness: 0.8, metalness: 0 }));
     }
     return materiais.get(cor)!;
   };
@@ -115,236 +115,145 @@ export function iniciarDino(root: HTMLElement, stage: HTMLButtonElement) {
     }
     return g;
   }
-  function peca(geo: THREE.BufferGeometry, cor: string, contorno = 0.03) {
+  function peca(geo: THREE.BufferGeometry, cor: string, contorno = 0.035) {
     const mesh = new THREE.Mesh(geo, mat(cor));
     if (contorno > 0) mesh.add(new THREE.Mesh(inflar(geo, contorno), materialContorno));
     return mesh;
   }
   const esfera = (raio: number) => new THREE.SphereGeometry(raio, 32, 24);
 
-  // ---------- Modelo (olhando para +x, patas em y = 0) ----------
-  const tri = new THREE.Group();
+  // ---------- Modelo: pata de três dedos (dedos apontando para +x, chão em y = 0) ----------
+  const pata = new THREE.Group();
 
-  // Tronco: quadril mais alto que os ombros, como no animal real.
-  const corpo = peca(
-    tubo(
-      [
-        [-1.9, 2.15, 0],
-        [-0.9, 2.45, 0],
-        [0.2, 2.3, 0],
-        [1.2, 1.98, 0],
-        [1.95, 1.78, 0],
-      ],
-      perfil([
-        [0, 0.7],
-        [0.3, 1.02],
-        [0.55, 1.06],
-        [0.82, 0.86],
-        [1, 0.58],
-      ]),
-      1.08,
-    ),
-    CORES.corpo,
-  );
-  tri.add(corpo);
-
-  // Rabo (grupo com pivô na base, para balançar)
-  const rabo = new THREE.Group();
-  rabo.position.set(-1.6, 2.2, 0);
-  rabo.add(
+  // Perna: sai por cima do quadro, com o tornozelo mais grosso.
+  pata.add(
     peca(
       tubo(
         [
-          [0.3, 0.05, 0],
-          [-0.9, -0.2, 0],
-          [-2.0, -0.62, 0],
-          [-2.9, -0.82, 0],
-          [-3.4, -0.72, 0],
+          [-1.1, 9, 0],
+          [-0.7, 4.5, 0],
+          [-0.3, 2.1, 0],
+          [0.05, 0.75, 0],
         ],
         perfil([
-          [0, 0.74],
-          [0.35, 0.44],
-          [0.75, 0.16],
-          [1, 0.03],
+          [0, 0.95],
+          [0.5, 0.7],
+          [0.8, 0.62],
+          [0.9, 0.72],
+          [1, 0.55],
         ]),
-        0.92,
+        1,
+        48,
+        28,
       ),
-      CORES.corpo,
+      CORES.pele,
     ),
   );
-  tri.add(rabo);
 
-  // Patas: coxa grossa, joelho, tornozelo, pé com três garras.
-  function pata(pts: [number, number, number][], raio: Perfil, pe: [number, number, number], tamPe: number) {
+  // Almofada do pé
+  const almofada = peca(esfera(1), CORES.pele);
+  almofada.scale.set(1.15, 0.62, 1.05);
+  almofada.position.set(0.25, 0.62, 0);
+  pata.add(almofada);
+
+  /** Um dedo com juntas (engrossa nos nós) e garra curva escura na ponta. */
+  function dedo(comprimento: number, grossura: number) {
     const g = new THREE.Group();
-    g.add(peca(tubo(pts, perfil(raio), 1, 32, 20), CORES.corpo));
-    const pe3 = peca(esfera(1), CORES.corpo, 0.025);
-    pe3.scale.set(0.4 * tamPe, 0.17, 0.33 * tamPe);
-    pe3.position.set(...pe);
-    g.add(pe3);
-    for (const dz of [-0.17, 0, 0.17]) {
-      const garra = peca(esfera(0.085), CORES.chifre, 0.015);
-      garra.scale.set(1.3, 0.8, 1);
-      garra.position.set(pe[0] + 0.36 * tamPe, pe[1] - 0.04, pe[2] + dz * tamPe);
-      g.add(garra);
-    }
-    return g;
-  }
-  for (const lado of [1, -1]) {
-    // Traseira (maior, joelho para a frente)
-    tri.add(
-      pata(
-        [
-          [-0.8, 2.45, 0.32 * lado],
-          [-0.4, 1.2, 0.68 * lado],
-          [-0.42, 0.85, 0.74 * lado],
-          [-0.72, 0.28, 0.76 * lado],
-        ],
-        [
-          [0, 0.55],
-          [0.35, 0.5],
-          [0.6, 0.34],
-          [1, 0.24],
-        ],
-        [-0.66, 0.15, 0.78 * lado],
-        1.05,
-      ),
-    );
-    // Dianteira (cotovelo para fora e para trás)
-    tri.add(
-      pata(
-        [
-          [1.2, 2.0, 0.3 * lado],
-          [1.12, 1.2, 0.7 * lado],
-          [1.1, 0.9, 0.78 * lado],
-          [1.3, 0.28, 0.74 * lado],
-        ],
-        [
-          [0, 0.46],
-          [0.35, 0.4],
-          [0.65, 0.28],
-          [1, 0.21],
-        ],
-        [1.36, 0.14, 0.76 * lado],
-        0.9,
-      ),
-    );
-  }
-
-  // Cabeça (grupo com pivô no pescoço)
-  const cabeca = new THREE.Group();
-  cabeca.position.set(1.95, 1.82, 0);
-  tri.add(cabeca);
-
-  const cranio = peca(esfera(1), CORES.corpo);
-  cranio.scale.set(0.95, 0.62, 0.55);
-  cranio.position.set(0.6, -0.08, 0);
-  cabeca.add(cranio);
-
-  // Focinho afinando até o bico de papagaio
-  cabeca.add(
-    peca(
-      tubo(
-        [
-          [0.9, -0.05, 0],
-          [1.45, -0.2, 0],
-          [1.85, -0.42, 0],
-        ],
-        perfil([
-          [0, 0.46],
-          [0.6, 0.3],
-          [1, 0.14],
-        ]),
-        0.82,
-        24,
-        20,
-      ),
-      CORES.corpo,
-    ),
-  );
-  const bico = peca(new THREE.ConeGeometry(0.15, 0.42, 20), CORES.bico, 0.02);
-  bico.rotation.z = Math.PI / 2 + 0.55; // aponta para frente e para baixo
-  bico.position.set(1.92, -0.55, 0);
-  cabeca.add(bico);
-
-  // Chifre do nariz (curto)
-  const nasal = peca(new THREE.ConeGeometry(0.1, 0.36, 16), CORES.chifre, 0.02);
-  nasal.position.set(1.42, 0.2, 0);
-  nasal.rotation.z = -0.35;
-  cabeca.add(nasal);
-
-  // Chifres da testa: longos e curvados para a frente
-  for (const lado of [1, -1]) {
-    cabeca.add(
+    const L = comprimento;
+    g.add(
       peca(
         tubo(
           [
-            [0.72, 0.38, 0.26 * lado],
-            [1.1, 0.85, 0.33 * lado],
-            [1.65, 1.2, 0.38 * lado],
-            [2.2, 1.34, 0.36 * lado],
+            [0, 0.62, 0],
+            [L * 0.45, 0.52, 0],
+            [L * 0.8, 0.4, 0],
+            [L, 0.36, 0],
           ],
           perfil([
-            [0, 0.15],
+            [0, 0.5 * grossura],
+            [0.3, 0.44 * grossura],
+            [0.42, 0.48 * grossura],
+            [0.6, 0.38 * grossura],
+            [0.75, 0.41 * grossura],
+            [1, 0.26 * grossura],
+          ]),
+          1.05,
+          40,
+          22,
+        ),
+        CORES.pele,
+      ),
+    );
+    g.add(
+      peca(
+        tubo(
+          [
+            [L - 0.1, 0.42, 0],
+            [L + 0.4, 0.46, 0],
+            [L + 0.78, 0.26, 0],
+            [L + 0.92, -0.02, 0],
+          ],
+          perfil([
+            [0, 0.22 * grossura],
+            [0.5, 0.14 * grossura],
             [1, 0.012],
           ]),
-          1,
+          0.7,
           32,
-          14,
+          16,
         ),
-        CORES.chifre,
+        CORES.garra,
         0.02,
       ),
     );
+    return g;
   }
 
-  // Olhos
-  for (const lado of [1, -1]) {
-    const olho = new THREE.Mesh(esfera(0.085), mat(CORES.olho));
-    olho.position.set(1.0, 0.16, 0.45 * lado);
-    cabeca.add(olho);
+  // Três dedos para a frente, abertos em leque, e um pequeno atrás.
+  const dedos: THREE.Group[] = [];
+  for (const [angulo, comp, gross] of [
+    [0.55, 1.9, 0.9],
+    [0, 2.35, 1],
+    [-0.55, 1.9, 0.9],
+  ] as const) {
+    const d = dedo(comp, gross);
+    d.position.set(0.55, 0, 0);
+    d.rotation.y = angulo;
+    pata.add(d);
+    dedos.push(d);
   }
+  const traseiro = dedo(0.7, 0.55);
+  traseiro.position.set(-0.3, 0.1, 0.35);
+  traseiro.rotation.y = Math.PI - 0.5;
+  pata.add(traseiro);
 
-  // Gola: escudo grande, levemente inclinado para trás, com pontas na borda.
-  const gola = new THREE.Group();
-  gola.position.set(0.05, 0.45, 0);
-  gola.rotation.z = 0.32;
-  const escudo = peca(esfera(1), CORES.gola);
-  escudo.scale.set(0.2, 1.2, 1.18);
-  gola.add(escudo);
-  const geoPonta = new THREE.ConeGeometry(0.1, 0.26, 12);
-  const N = 13;
-  for (let i = 0; i < N; i++) {
-    const a = -Math.PI * 0.62 + (i / (N - 1)) * Math.PI * 1.24; // arco de cima
-    const ponta = peca(geoPonta, CORES.borda, 0.015);
-    ponta.position.set(0, Math.cos(a) * 1.22, Math.sin(a) * 1.2);
-    ponta.rotation.x = a;
-    gola.add(ponta);
-  }
-  cabeca.add(gola);
+  pata.scale.setScalar(0.95);
 
-  // Centraliza e ajusta o tamanho para caber no quadro.
-  tri.position.x = 0.1;
-  tri.scale.setScalar(0.72);
-
-  const pivo = new THREE.Group(); // pivô nas patas, para o squash & stretch.
-  pivo.add(tri);
-  const BASE_Y = -1.3;
+  const pivo = new THREE.Group(); // pivô no chão, para a pisada.
+  pivo.add(pata);
+  const BASE_Y = -0.2;
   pivo.position.y = BASE_Y;
   scene.add(pivo);
 
-  const materialSombra = new THREE.MeshBasicMaterial({ color: '#0b1f15', transparent: true, opacity: 0.35 });
-  const sombra = new THREE.Mesh(new THREE.CircleGeometry(2.8, 48), materialSombra);
+  const materialSombra = new THREE.MeshBasicMaterial({ color: '#0b1f15', transparent: true, opacity: 0.4 });
+  const sombra = new THREE.Mesh(new THREE.CircleGeometry(2.6, 48), materialSombra);
   sombra.rotation.x = -Math.PI / 2;
-  sombra.scale.y = 0.4;
-  sombra.position.y = BASE_Y - 0.01;
+  sombra.position.set(0.9, BASE_Y - 0.01, 0);
+  sombra.scale.y = 0.55;
   scene.add(sombra);
 
+  // Anel de poeira que se espalha na pisada.
+  const materialPoeira = new THREE.MeshBasicMaterial({ color: CORES.poeira, transparent: true, opacity: 0, side: THREE.DoubleSide });
+  const poeira = new THREE.Mesh(new THREE.RingGeometry(0.85, 1, 48), materialPoeira);
+  poeira.rotation.x = -Math.PI / 2;
+  poeira.position.set(0.9, BASE_Y + 0.02, 0);
+  scene.add(poeira);
+
   scene.add(new THREE.HemisphereLight('#fff6e0', '#2a3b2e', 1.6));
-  const sol = new THREE.DirectionalLight('#ffffff', 2.2);
-  sol.position.set(4, 7, 6);
+  const sol = new THREE.DirectionalLight('#ffffff', 2.3);
+  sol.position.set(5, 8, 7);
   scene.add(sol);
-  const recorte = new THREE.DirectionalLight('#ffe7b0', 1.2); // luz de recorte por trás
+  const recorte = new THREE.DirectionalLight('#ffe7b0', 1.1);
   recorte.position.set(-5, 3, -4);
   scene.add(recorte);
 
@@ -354,17 +263,16 @@ export function iniciarDino(root: HTMLElement, stage: HTMLButtonElement) {
     if (!width || !height) return;
     renderer.setSize(width, height, false);
     camera.aspect = width / height;
-    // Em telas estreitas, afasta a câmera para o tricerátops caber inteiro.
-    camera.position.z = camera.aspect < 0.9 ? (14 / camera.aspect) * 0.9 : 14;
+    camera.position.z = camera.aspect < 0.9 ? (15 / camera.aspect) * 0.9 : 15;
     camera.updateProjectionMatrix();
     renderizar();
   };
 
   // ---------- Animação ----------
-  const GIRO_BASE = -0.55; // de três quartos, como na foto de referência
+  const GIRO_BASE = -0.75; // dedos apontando para a câmera, de três quartos
   const alvo = { x: 0, y: 0 };
-  const atual = { giro: GIRO_BASE, cabecaY: 0, cabecaZ: 0 };
-  let pulo = -1; // progresso do pulo (0..1); -1 = parado
+  const atual = { giro: GIRO_BASE, inclina: 0 };
+  let pisada = -1; // progresso da pisada (0..1); -1 = parada
   let tempo = 0;
   let ultimo = performance.now();
   let rodando = false;
@@ -372,10 +280,9 @@ export function iniciarDino(root: HTMLElement, stage: HTMLButtonElement) {
 
   const renderizar = () => renderer.render(scene, camera);
 
-  const suavizar = (atualV: number, alvoV: number, dt: number, velocidade: number) =>
-    atualV + (alvoV - atualV) * (1 - Math.exp(-dt * velocidade));
-
-  const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
+  const suavizar = (a: number, b: number, dt: number, v: number) => a + (b - a) * (1 - Math.exp(-dt * v));
+  const easeOut = (t: number) => 1 - (1 - t) ** 3;
+  const easeIn = (t: number) => t * t * t;
 
   function quadro(agora: number) {
     if (!rodando) return;
@@ -383,43 +290,61 @@ export function iniciarDino(root: HTMLElement, stage: HTMLButtonElement) {
     ultimo = agora;
     tempo += dt;
 
-    // O corpo vira pouco (limitado para não ficar de frente nem de costas);
-    // a cabeça acompanha o ponteiro mais rápido.
-    atual.giro = suavizar(atual.giro, GIRO_BASE + alvo.x * 0.18 + Math.sin(tempo * 0.5) * 0.06, dt, 3);
-    atual.cabecaY = suavizar(atual.cabecaY, alvo.x * 0.12 - 0.08, dt, 6);
-    atual.cabecaZ = suavizar(atual.cabecaZ, -alvo.y * 0.2 + Math.sin(tempo * 1.3) * 0.03, dt, 6);
+    atual.giro = suavizar(atual.giro, GIRO_BASE + alvo.x * 0.35, dt, 4);
+    atual.inclina = suavizar(atual.inclina, alvo.y * 0.06, dt, 4);
 
-    cabeca.rotation.set(0, atual.cabecaY, atual.cabecaZ);
-    rabo.rotation.y = Math.sin(tempo * 1.8) * 0.18;
-    const respira = 1 + Math.sin(tempo * 2) * 0.015;
-    corpo.scale.set(1, respira, respira);
+    // Dedos "tamborilando" devagar, um de cada vez.
+    let curvaDedos = 0;
+    dedos.forEach((d, i) => {
+      d.rotation.z = Math.max(0, Math.sin(tempo * 2.2 - i * 0.9)) * 0.07;
+    });
 
     let altura = 0;
     let achata = 0;
-    let giro = 0;
+    let tremor = 0;
+    let anel = -1;
 
-    if (pulo >= 0) {
-      pulo += dt / 0.95;
-      const p = Math.min(pulo, 1);
-      if (p < 0.16) {
-        achata = Math.sin((p / 0.16) * Math.PI) * 0.12; // antecipação
-      } else if (p < 0.9) {
-        const ar = (p - 0.16) / 0.74;
-        altura = Math.sin(ar * Math.PI) * 1.0;
-        achata = -Math.sin(ar * Math.PI) * 0.05; // estica no ar
-        giro = easeInOut(ar) * Math.PI * 2;
+    if (pisada >= 0) {
+      pisada += dt / 1.1;
+      const p = Math.min(pisada, 1);
+      if (p < 0.4) {
+        altura = easeOut(p / 0.4) * 1.6; // levanta devagar
+        curvaDedos = easeOut(p / 0.4) * 0.3; // dedos se erguem
+      } else if (p < 0.52) {
+        const k = (p - 0.4) / 0.12;
+        altura = (1 - easeIn(k)) * 1.6; // desce com força
+        curvaDedos = (1 - k) * 0.3;
       } else {
-        achata = Math.sin(((p - 0.9) / 0.1) * Math.PI) * 0.08; // aterrissagem
+        const k = (p - 0.52) / 0.48;
+        achata = Math.sin(Math.min(k * 3, 1) * Math.PI) * 0.1; // impacto
+        tremor = (1 - k) ** 2;
+        anel = k;
       }
-      if (pulo >= 1) pulo = -1;
+      if (pisada >= 1) pisada = -1;
     }
 
+    for (const d of dedos) d.rotation.z += curvaDedos;
+
     pivo.position.y = BASE_Y + altura;
-    pivo.rotation.set(0, atual.giro + giro, 0);
-    pivo.scale.set(1 + achata * 0.6, 1 - achata, 1 + achata * 0.6);
-    const s = 1 - Math.min(altura, 1) * 0.35;
-    sombra.scale.set(s, s * 0.4, s);
-    materialSombra.opacity = 0.35 * s;
+    pivo.rotation.set(atual.inclina, atual.giro, 0);
+    pivo.scale.set(1 + achata * 0.5, 1 - achata, 1 + achata * 0.5);
+
+    const s = 1 - Math.min(altura, 1.6) * 0.25;
+    sombra.scale.set(s, s * 0.55, s);
+    materialSombra.opacity = 0.4 * s;
+
+    if (anel >= 0) {
+      const r = 1.6 + easeOut(anel) * 2.4;
+      poeira.scale.set(r, r, r);
+      materialPoeira.opacity = 0.55 * (1 - anel);
+    } else {
+      materialPoeira.opacity = 0;
+    }
+
+    // Tremida da câmera no impacto
+    camera.position.x = Math.sin(tempo * 90) * 0.12 * tremor;
+    camera.position.y = CAMERA_Y + Math.cos(tempo * 110) * 0.1 * tremor;
+    camera.lookAt(ALVO_CAMERA);
 
     renderizar();
     requestAnimationFrame(quadro);
@@ -439,8 +364,7 @@ export function iniciarDino(root: HTMLElement, stage: HTMLButtonElement) {
     pivo.position.y = BASE_Y;
     pivo.rotation.set(0, GIRO_BASE, 0);
     pivo.scale.setScalar(1);
-    cabeca.rotation.set(0, 0, 0);
-    rabo.rotation.y = 0;
+    dedos.forEach((d) => (d.rotation.z = 0));
     renderizar();
   };
 
@@ -456,7 +380,7 @@ export function iniciarDino(root: HTMLElement, stage: HTMLButtonElement) {
 
   stage.addEventListener('click', () => {
     if (reduzirMovimento.matches) return;
-    if (pulo < 0) pulo = 0;
+    if (pisada < 0) pisada = 0;
     iniciarLoop();
   });
 
